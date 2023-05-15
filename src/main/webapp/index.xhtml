@@ -16,5 +16,31 @@
                 <h:outputText value="#{end.nome}"/>
             </h:column>
         </h:dataTable>
+
+        <h3>FABRiCANTE</h3>
+
+        <h:dataTable value="#{testeBean.daoFabricante.fabricantes}" var="fab">
+            <h:column>
+                <h:outputText value="#{fab.id}"/>
+            </h:column>
+            <h:column>
+                <h:outputText value="#{fab.cnpj}"/>
+            </h:column>
+            <h:column>
+                <h:outputText value="#{fab.nome}"/>
+            </h:column>
+            <h:column>
+                <h:outputText value="#{fab.razao}"/>
+            </h:column>
+            <h:column>
+                <h:outputText value="#{fab.representanteComercial}"/>
+            </h:column>
+            <h:column>
+                <h:outputText value="#{fab.representanteFone}"/>
+            </h:column>
+            <h:column>
+                <h:outputText value="#{fab.representanteRamal}"/>
+            </h:column>
+        </h:dataTable> 
     </h:body>
 </html>

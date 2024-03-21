@@ -78,7 +78,7 @@ CREATE TABLE empresa (
 /* Inserts Empresa tipo Filial */
 insert into  empresa (cnpj, ie, razao, nome, telefone, tipo_empresa, id_end)
 		values ('08472686000125', '78253665','Campos Pavani de Macae Com Alim Ltda', 'JPavani Matriz', '2237370460',  'Filial', 1),
-				('08472686000206', '78524960','Campos Pavani de Macae Com Alim Ltda', 'JPavani Filial', '2227622369' 'Filial', 2);
+				('08472686000206', '78524960','Campos Pavani de Macae Com Alim Ltda', 'JPavani Filial', '2227622369', 'Filial', 2);
     
 /* Inserts Empresa tipo Fabricante */ 
 insert into empresa (nome, razao, cnpj, ie, telefone, site, login, senha, info, id_end )
@@ -221,11 +221,11 @@ Sistema - softwares que tenha prestação de serviço e/ou mensalidade ou necess
 Software - de aquisição unica, adquirida a chave ex.: CorelDraw, windows ferramentas,
 */
 
-insert into produto values(null,'Switch',null,1,1),
-    (null,'Roteador',null,1,1),
-    (null,'Access Point',null,1,1),
-    (null,'Antena RF Ativa','Faz a transmissão do sinal',1,1),
-    (null,'Antena RF Passiva','Antena (arredondada) para direcionar a transmissão',1,1);
+insert into produto values(null,'Switch','Equipamento',null,1,1),
+    (null,'Roteador','Equipamento',null,1,1),
+    (null,'Access Point','Equipamento',null,1,1),
+    (null,'Antena RF Ativa','Equipamento','Faz a transmissão do sinal',1,1),
+    (null,'Antena RF Passiva','Equipamento','Antena (arredondada) para direcionar a transmissão',1,1);
 
 insert into produto(nome,id_categoria) values ('Balança',2),('Balança checkout',2),('Catraca',2),('Coletor',2),('Gaveta',2),
 	('Impressora não-fiscal',2),('Leitor Biométrico',2),('Leitor Boleto',2),('Leitor Cód.Barras Fixo',2),('Leitor Cód.Barras Manual',2),
@@ -249,7 +249,7 @@ CREATE TABLE modelo (
     id_produto int not null,
     id_fabricante int not null,
     primary key (id),
-    foreign key (id_equipamento) references equipamento(id),
+    foreign key (id_produto) references produto(id),
     foreign key (id_fabricante) references fabricante (id)   
     );
     
@@ -257,14 +257,6 @@ insert into modelo (nome,codigo,id_produto,id_fabricante) values('Catalyst 2960-
 insert into modelo (nome,codigo,id_produto,id_fabricante) values('Catalyst 2960-X-48TD-L','WS-C2960X-48TD-L',1,1);
 insert into modelo (nome,codigo,id_produto,id_fabricante) values('Catalyst 2960-XR-48LPD-I','WS-C2960XR-48LPD-I',1,1);
 insert into modelo (nome,codigo,id_produto,id_fabricante) values('Catalyst 3560 serires PoE-48','WS-C3560-48PS-S',1,1);
-
-select c.nome, p.nome, f.nome, m.id, m.nome, m.codigo, e.nome, e.obs
-FROM categoria c
-INNER JOIN produto p ON c.id = p.id_categoria
-INNER JOIN modelo m ON p.id = m.id_produto
-INNER JOIN fabricante f ON f.id = m.id_fabricante
-INNER JOIN especifica_modelo em ON em.id_modelo = m.id
-INNER JOIN especificacao e ON e.id = em.id_especifica;
 
 /* ---- ESPECIFÍCAÇÕES ---- */
 create table especificacao (
@@ -311,9 +303,21 @@ create table pedido (
  */
     
 alter table pedido modify column status_pedido enum('Aberto', 'Pendente', 'Concluido', 'Cancelado');
+
+/*Alterações encontradas, mas que não fazem efeito na tabela. Serão removidas desses arquivo em breve:
 alter table pedido add column frete double(10,2) unsigned not null after status_pedido;
 alter table pedido drop column despesa_fixa;
-    
+ */  
+ 
+select c.nome, p.nome, em.nome, m.id, m.nome, m.codigo, e.nome, e.obs
+FROM categoria c
+INNER JOIN produto p ON c.id = p.id_categoria
+INNER JOIN modelo m ON p.id = m.id_produto
+INNER JOIN fabricante f ON f.id = m.id_fabricante
+LEFT OUTER JOIN empresa em ON f.id = em.id
+INNER JOIN datasheet ds ON ds.id_modelo = m.id
+INNER JOIN especificacao e ON e.id = ds.id_especifica;
+
 /* --- ITEM_PEDIDO --- */
 create table pedido_item (
     id int unsigned auto_increment,
@@ -326,9 +330,11 @@ create table pedido_item (
     foreign key (id_modelo) references modelo(id),
     foreign key (id_pedido) references pedido(id)
 );
-alter table item_pedido modify column id_pedido int unsigned not null;
-alter table item_pedido add foreign key (id_pedido) references pedido(id);
-alter table item_pedido rename pedido_item;
+alter table pedido_item modify column id_pedido int unsigned not null;
+alter table pedido_item add foreign key (id_pedido) references pedido(id);
+
+#Modificação não mais necesária:
+#alter table item_pedido rename pedido_item;
 
 /* --- DESPESAS --- 
 Compra, Fixa ou Serviços
@@ -429,8 +435,9 @@ create table ordinateur_peca(
     id_item int unsigned,
     id_modelo int,
     ns varchar(45),
-    primary key (id_item),
-    foreign key (id_comphard) references componente_hardware
+    primary key (id_item)
+    #Coluna não mais existe
+    #foreign key (id_comphard) references componente_hardware
 );
 
 /* --- COMPONENTE --- */
@@ -501,7 +508,8 @@ create table feriado (
 	id int auto_increment not null,
     nome varchar(50),
     id_colaborador int,
-    foreign key (id_colaborador) references colaborador
+    primary key (id),
+    foreign key (id_colaborador) references colaborador (id)
 );
 
 /* --- MANUTENCAO --- *  Limpeza e manutenção preventiva dos equipamentos /

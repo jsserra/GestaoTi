@@ -9,6 +9,8 @@ import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,9 +19,9 @@ import java.util.List;
  * @author julianos
  */
 @Stateless
-public class FabricanteDao {
+public class FabricanteDao implements Serializable {
 
-    @PersistenceContext(unitName = "com.jp_GestaoTi_war_1.0-SNAPSHOTPU")
+    @PersistenceContext(unitName = "gestaotiPU")
     EntityManager em;
     
     public List<Fabricante> getFabricantes(){

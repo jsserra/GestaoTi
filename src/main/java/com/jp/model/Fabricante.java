@@ -14,17 +14,21 @@ import jakarta.persistence.Table;
  * @author julianos
  */
 @Entity
-@Table(name = "fabricante_heranca")
+@Table(name = "fabricante")
 public class Fabricante extends Empresa implements Serializable {
 
-    @Column(name = "representante_comercial")
-    private String representanteComercial;
-    @Column(name = "representante_fone")
-    private String representanteFone;
-    @Column(name = "representante_ramal")
-    private String representanteRamal;
+    @Column(name = "contato")
+    private String contato;
+    @Column(name = "contato_fone")
+    private String contatoFone;
+    @Column(name = "contato_ramal")
+    private String contatoRamal;
+    @Column(name = "contato_email")
+    private String contatoEmail;
     @Column(name = "suporte_fone")
     private String suporteFone;
+    @Column(name = "suporte_email")
+    private String suporteEmail;
     @Column(name = "sac_fone")
     private String sacFone;
     @Column(name = "sac_email")
@@ -33,29 +37,36 @@ public class Fabricante extends Empresa implements Serializable {
     public Fabricante() {
     }
 
-
-    public String getRepresentanteComercial() {
-        return representanteComercial;
+    public String getContato() {
+        return contato;
     }
 
-    public void setRepresentanteComercial(String representanteComercial) {
-        this.representanteComercial = representanteComercial;
+    public void setContato(String contato) {
+        this.contato = contato;
     }
 
-    public String getRepresentanteFone() {
-        return representanteFone;
+    public String getContatoFone() {
+        return contatoFone;
     }
 
-    public void setRepresentanteFone(String representanteFone) {
-        this.representanteFone = representanteFone;
+    public void setContatoFone(String contatoFone) {
+        this.contatoFone = contatoFone;
     }
 
-    public String getRepresentanteRamal() {
-        return representanteRamal;
+    public String getContatoRamal() {
+        return contatoRamal;
     }
 
-    public void setRepresentanteRamal(String representanteRamal) {
-        this.representanteRamal = representanteRamal;
+    public void setContatoRamal(String contatoRamal) {
+        this.contatoRamal = contatoRamal;
+    }
+
+    public String getContatoEmail() {
+        return contatoEmail;
+    }
+
+    public void setContatoEmail(String contatoEmail) {
+        this.contatoEmail = contatoEmail;
     }
 
     public String getSuporteFone() {
@@ -64,6 +75,14 @@ public class Fabricante extends Empresa implements Serializable {
 
     public void setSuporteFone(String suporteFone) {
         this.suporteFone = suporteFone;
+    }
+
+    public String getSuporteEmail() {
+        return suporteEmail;
+    }
+
+    public void setSuporteEmail(String suporteEmail) {
+        this.suporteEmail = suporteEmail;
     }
 
     public String getSacFone() {
@@ -81,7 +100,4 @@ public class Fabricante extends Empresa implements Serializable {
     public void setSacEmail(String sacEmail) {
         this.sacEmail = sacEmail;
     }
-
-
-
 }

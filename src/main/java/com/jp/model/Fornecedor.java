@@ -42,8 +42,8 @@ public class Fornecedor implements Serializable {
     private String foneVenda;
     @Column(name = "fone_sac")
     private String foneSac;
-    @Column(name = "wattsapp")
-    private String wattsapp;
+    @Column(name = "whatsapp")
+    private String whatsapp;
     @Column(name = "representante")
     private String representante;
     @Column(name = "representante_fone")
@@ -147,12 +147,12 @@ public class Fornecedor implements Serializable {
         this.foneSac = foneSac;
     }
 
-    public String getWattsapp() {
-        return wattsapp;
+    public String getWhatsapp() {
+        return whatsapp;
     }
 
-    public void setWattsapp(String wattsapp) {
-        this.wattsapp = wattsapp;
+    public void setWhatsapp(String whatsapp) {
+        this.whatsapp = whatsapp;
     }
 
     public String getRepresentante() {

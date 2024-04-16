@@ -1,0 +1,23 @@
+.empresas-table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.empresas-table{
+    margin: 0.7em 0.6em;
+}
+
+.empresas-table .checkbox-table{
+    text-align: center;
+    text-align: -webkit-center;
+    text-align: -moz-center;
+}
+
+.empresas-table .commands-table .action-button:nth-child(n){
+    margin-right: 5px;
+}
+
+body .ui-datatable .ui-datatable-data>tr.ui-state-highlight {
+
+}

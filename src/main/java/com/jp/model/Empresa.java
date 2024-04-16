@@ -4,15 +4,9 @@
  */
 package com.jp.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorColumn;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.Table;
+import com.jp.model.enums.TipoEmpresa;
+import jakarta.persistence.*;
+
 import java.io.Serializable;
 
 
@@ -44,13 +38,16 @@ public class Empresa implements Serializable {
 
     @Column(name = "nome")
     private String nome;
-    
-    @Column(name = "tel")
-    private String tel;
+
+    @Column(name = "telefone")
+    private String telefone;
     
     @Column(name = "celular")
     private String celular;
-    
+
+    @Column(name = "whatsapp")
+    private String whatsapp;
+
     @Column(name = "email")
     private String email;
     
@@ -65,9 +62,23 @@ public class Empresa implements Serializable {
     
     @Column(name = "codigo_cliente")
     private String codigoCliente;
-    
-    @Column(name = "tipo_empresa")
-    private String tipoEmpresa;
+//
+//    @Column(name = "tipo_empresa")
+//    private TipoEmpresa tipoEmpresa;
+
+    @Lob
+    @Column(name = "logotipo")
+    private String logotipo;
+
+    @Column(name = "info")
+    private String info;
+
+    @Column(name = "ativo")
+    private Boolean ativo;
+
+    @OneToOne
+    @JoinColumn(name = "id_end", referencedColumnName = "id", nullable = true)
+    private Endereco endereco;
 
     public Empresa() {
     }
@@ -122,12 +133,12 @@ public class Empresa implements Serializable {
         this.nome = nome;
     }
 
-    public String getTel() {
-        return tel;
+    public String getTelefone() {
+        return telefone;
     }
 
-    public void setTel(String tel) {
-        this.tel = tel;
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
     }
 
     public String getCelular() {
@@ -136,6 +147,14 @@ public class Empresa implements Serializable {
 
     public void setCelular(String celular) {
         this.celular = celular;
+    }
+
+    public String getWhatsapp() {
+        return whatsapp;
+    }
+
+    public void setWhatsapp(String whatsapp) {
+        this.whatsapp = whatsapp;
     }
 
     public String getEmail() {
@@ -178,12 +197,44 @@ public class Empresa implements Serializable {
         this.codigoCliente = codigoCliente;
     }
 
-    public String getTipoEmpresa() {
-        return tipoEmpresa;
+//    public TipoEmpresa getTipoEmpresa() {
+//        return tipoEmpresa;
+//    }
+//
+//    public void setTipoEmpresa(TipoEmpresa tipoEmpresa) {
+//        this.tipoEmpresa = tipoEmpresa;
+//    }
+
+    public String getLogotipo() {
+        return logotipo;
     }
 
-    public void setTipoEmpresa(String tipoEmpresa) {
-        this.tipoEmpresa = tipoEmpresa;
+    public void setLogotipo(String logotipo) {
+        this.logotipo = logotipo;
+    }
+
+    public String getInfo() {
+        return info;
+    }
+
+    public void setInfo(String info) {
+        this.info = info;
+    }
+
+    public Boolean getAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(Boolean ativo) {
+        this.ativo = ativo;
+    }
+
+    public Endereco getEndereco() {
+        return endereco;
+    }
+
+    public void setEndereco(Endereco endereco) {
+        this.endereco = endereco;
     }
 
     @Override

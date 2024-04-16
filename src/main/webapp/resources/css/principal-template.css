@@ -1,0 +1,61 @@
+body{
+    /*background-color: ghostwhite;*/
+    background-color: ghostwhite;
+}
+
+.navbar{
+    /*background-color: #1f2d40;*/
+
+}
+
+.navbar .topbar .logo{
+    margin: 5px;
+}
+
+.navbar .topbar{
+    display: flex;
+    min-height: 3rem;
+    border-radius: 0.5em 0.5em 0 0;
+    border-color: #304562;
+}
+
+.navbar .downbar{
+    padding: 0;
+    border-radius: 0 0;
+    border-color: #304562;
+}
+
+.topbar-right{
+    position: absolute;
+    right: 1rem;
+    padding: 5px;
+}
+
+.navbar .topbar .topbar-right .avatar{
+    color: #fff;
+    background-color: #2196F3;
+    font-weight: bold;
+    vertical-align: middle;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.navbar .topbar .topbar-right .nav-button{
+    margin-left: 5px;
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+body .ui-datatable .ui-datatable-data>tr.ui-state-highlight{
+    background-color: rgba(40, 58, 72, 0.59);
+    /*background-color: #a33c3c;*/
+}
+
+body .ui-datatable .ui-datatable-data>tr.ui-state-hover{
+    /*background: rgba(100,181,246,.16);*/
+    background-color: rgba(52, 88, 115, 0.59);
+}
+
+body .ui-datatable thead th.ui-state-hover{
+    background-color: rgba(52, 88, 115, 0.59);
+}

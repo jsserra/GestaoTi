@@ -1,0 +1,26 @@
+.bg-white{
+    background-color: white;
+}
+
+.bg-dark{
+    background-color: #212121;
+}
+.bg-darkblue{
+    background-color: #1f2d40!important;
+}
+
+.text-white{
+    color: #e3e5e7;
+}
+
+.d-inline{
+    display: inline;
+}
+
+.d-inline-block{
+    display: inline-block;
+}
+
+.shadow{
+    filter: brightness(80%);
+}

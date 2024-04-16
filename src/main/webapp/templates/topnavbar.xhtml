@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<f:view encoding ="ISO_8859-1" contentType="text/html">
+    <body>
+        <ui:composition>
+            <div class="navbar">
+                <div class="topbar bg-darkblue">
+                <h:graphicImage library="images" name="logo-gestaoTIcores.png" styleClass="logo" height="45em"/>
+                    <div class="topbar-right">
+                        <p:avatar id="userAvatar" label="E" shape="circle" styleClass="avatar"/>
+                        <p:tooltip for="userAvatar" value="Everson" position="bottom"/>
+                        <p:button icon="pi pi-fw pi-sign-out" value="Logout" styleClass="rounded-button ui-button-info ui-button-outlined nav-button"/>
+                    </div>
+                </div>
+                <h:form>
+                    <p:menubar styleClass="downbar bg-darkblue">
+                        <p:menuitem icon="pi pi-fw pi-home" styleClass="text-white" label="Início" value="Início" action="/index"/>-->
+                        <p:submenu icon="pi pi-fw pi-file-edit" label="Cadastros">
+                            <p:menuitem styleClass="text-white"  value="Colaboradores"/>
+                            <p:menuitem value="Usuários"/>
+                            <p:menuitem value="Empresa" action="#{filialController.acessar()}"/>
+                            <p:menuitem value="Fabricante"/>
+                            <p:menuitem value="Fornecedor"/>
+                        </p:submenu>
+                        <p:submenu icon="pi pi-wallet" label="Compras">
+                            <p:menuitem value="Solicitar Compra"/>
+                            <p:menuitem value="Solicitações"/>
+                            <p:menuitem value="Cotação"/>
+                            <p:menuitem value="Incluir Pedidos"/>
+                            <p:menuitem value="Pedidos"/>
+                            <p:menuitem value="Histórico de Preços"/>
+                        </p:submenu>
+                        <p:submenu icon="pi pi-box" label="Ativos">
+                            <p:menuitem value="Novo ativo"/>
+                            <p:menuitem value="Listagem de ativos"/>
+                            <p:menuitem value="Incluir Pedidos"/>
+                            <p:menuitem value="Manutenções"/>
+                            <p:menuitem value="Manutenir"/>
+                        </p:submenu>
+                    </p:menubar>
+                </h:form>
+            </div>
+        </ui:composition>
+    </body>
+</f:view>
+</html>

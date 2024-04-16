@@ -2,46 +2,47 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:jsf="http://xmlns.jcp.org/jsf"
+      xmlns:f="http://java.sun.com/jsf/core"
       xmlns:p="http://primefaces.org/ui">
-    <h:head>
-        <title>Gestão Ti</title>
-    </h:head>
-    <h:body>
-        <h1>Hello Gestão Ti  : )</h1>
-        <h:outputText value="#{testeBean.horaAtual}"/>
-        <h:dataTable value="#{testeBean.daoEndereco.enderecos}" var="end">
-            <h:column>
-                <h:outputText value="#{end.id}"/>
-            </h:column>
-            <h:column>
-                <h:outputText value="#{end.nome}"/>
-            </h:column>
-        </h:dataTable>
+<f:view>
+<!--    <h:body>-->
+<!--    <ui:composition template="pageLayouts/default.xhtml">-->
+<!--        <ui:define name="title">Início</ui:define>-->
+<!--        <ui:define name="content">-->
+    <ui:composition template="templates/principal.xhtml">
+        <ui:define name="pageTitle">Página Inicial</ui:define>
+        <ui:define name="links">
+            <h:outputStylesheet library="css" name="index.css"/>
+        </ui:define>
+        <ui:define name="content">
+            <div class="dashboard-cards">
+                <p:card styleClass="dashboard-info-card totalAssets">
+                    <h1>1,273</h1>
+                    <h2>Total de Ativos</h2>
+                </p:card>
+                <p:card styleClass="dashboard-info-card totalSoftwares">
+                    <h1>56</h1>
+                    <h2>Softwares</h2>
+                </p:card>
+                <p:card styleClass="dashboard-info-card totalEquipments">
+                    <h1>1.223</h1>
+                    <h2>Equipamentos</h2>
+                </p:card >
+                <p:card styleClass="dashboard-info-card totalInMaintenance">
+                    <h1>15</h1>
+                    <h2>Em manutenção</h2>
+                </p:card>
+            </div>
 
-        <h3>FABRiCANTE</h3>
+            <h1>Hello Gestão Ti  : )</h1>
 
-        <h:dataTable value="#{testeBean.daoFabricante.fabricantes}" var="fab">
-            <h:column>
-                <h:outputText value="#{fab.id}"/>
-            </h:column>
-            <h:column>
-                <h:outputText value="#{fab.cnpj}"/>
-            </h:column>
-            <h:column>
-                <h:outputText value="#{fab.nome}"/>
-            </h:column>
-            <h:column>
-                <h:outputText value="#{fab.razao}"/>
-            </h:column>
-            <h:column>
-                <h:outputText value="#{fab.representanteComercial}"/>
-            </h:column>
-            <h:column>
-                <h:outputText value="#{fab.representanteFone}"/>
-            </h:column>
-            <h:column>
-                <h:outputText value="#{fab.representanteRamal}"/>
-            </h:column>
-        </h:dataTable> 
-    </h:body>
+        </ui:define>
+
+<!--        </ui:define>-->
+<!--    </ui:composition>-->
+<!--    </h:body>-->
+    </ui:composition>
+</f:view>>
 </html>

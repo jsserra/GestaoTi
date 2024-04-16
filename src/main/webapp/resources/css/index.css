@@ -1,0 +1,57 @@
+.dashboard-cards{
+    margin: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+.dashboard-cards .dashboard-info-card {
+    min-width: 18rem;
+    display: inline-block;
+    margin: 0.5em;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    border-style: solid;
+    border-width: 2px;
+    transition: transform 1s, filter 1s;
+    transition-timing-function: ease-out;
+}
+
+.dashboard-cards .dashboard-info-card:hover {
+    cursor: pointer;
+    filter: brightness(1.2);
+    transform: scale(1.05);
+}
+
+.dashboard-cards .totalAssets{
+    background-image: url("#{resource['images:dashboard-card-assets.png']}");
+    /*background-size: cover;*/
+    /*background-repeat: no-repeat;*/
+    /*border: 2px solid #416e40;*/
+    border-color: #416e40;
+}
+
+.dashboard-cards .totalSoftwares{
+    background-image: url("#{resource['images:dashboard-card-softwares.png']}");
+    border-color: #244c7d;
+    /*background-size: cover;*/
+    /*background-repeat: no-repeat;*/
+    /*border: 2px solid #416e40;*/
+}
+
+.dashboard-cards .totalEquipments{
+    background-image: url("#{resource['images:dashboard-card-equipments.png']}");
+    border-color: #6d4c17;
+    /*background-size: cover;*/
+    /*background-repeat: no-repeat;*/
+    /*border: 2px solid #416e40;*/
+}
+
+.dashboard-cards .totalInMaintenance{
+    background-image: url("#{resource['images:dashboard-card-maintenance.png']}");
+    border-color: #a33c3c;
+    /*background-size: cover;*/
+    /*background-repeat: no-repeat;*/
+    /*border: 2px solid #416e40;*/
+}

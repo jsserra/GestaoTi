@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<f:view>
+    <ui:composition template="../templates/principal.xhtml">
+        <ui:define name="pageTitle">Listagem de Empresas</ui:define>
+
+        <ui:define name="links">
+            <h:outputStylesheet library="css" name="empresas.css"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <h1>Empresas</h1>
+            <div class="card crud-demo">
+                <h:form id="form">
+                    <p:growl id="messages" showDetail="true" />
+                    <p:toolbar>
+                        <p:toolbarGroup>
+                            <p:commandButton value="Incluir" icon="pi pi-plus" actionListener="#{filialController.openNew}"
+                                             update=":dialogs:manage-empresa-content" oncomplete="PF('manageEmpresaDialog').show()"
+                                             styleClass="ui-button-success" style="margin-right: .5rem">
+                                <p:resetInput target=":dialogs:manage-empresa-content" />
+                            </p:commandButton>
+                            <p:commandButton id="delete-empresas-button" value="#{filialController.deleteButtonMessage}"
+                                             icon="pi pi-trash" actionListener="#{filialController.deleteSelectedEmpresas}"
+                                             styleClass="ui-button-danger" disabled="#{!filialController.hasSelectedEmpresas()}" update="@this">
+                                <p:confirm header="Confirmation" message="Dseja realmente excluir a(s) empresas selecionada(s)?"
+                                           icon="pi pi-exclamation-triangle" />
+                            </p:commandButton>
+                        </p:toolbarGroup>
+                        <p:toolbarGroup align="right">
+                        </p:toolbarGroup>
+                    </p:toolbar>
+
+                    <p:dataTable id="dt-empresas" widgetVar="dtEmpresas" var="empresa" value="#{filialController.empresas}"
+                                 reflow="true" styleClass="empresas-table" selection="#{filialController.selectedEmpresas}"
+                                 rowKey="#{empresa.id}" paginator="true" rows="10" rowSelectMode="add" paginatorPosition="bottom">
+                        <f:facet name="header">
+                            <div class="empresas-table-header">
+                                <span style="font-weight: bold">EMPRESAS</span>
+                                <span class="filter-container ui-input-icon-left"> <i class="pi pi-search"></i>
+                                    <p:inputText id="globalFilter" onkeyup="PF('dtEmpresas').filter()" placeholder="Pesquisar" />
+                                </span>
+                            </div>
+                        </f:facet>
+
+                        <p:ajax event="rowSelect" update=":form:delete-empresas-button" />
+                        <p:ajax event="rowUnselect" update=":form:delete-empresas-button" />
+                        <p:ajax event="rowSelectCheckbox" update=":form:delete-empresas-button" />
+                        <p:ajax event="rowUnselectCheckbox" update=":form:delete-empresas-button" />
+                        <p:ajax event="toggleSelect" update=":form:delete-empresas-button" />
+
+                        <p:column selectionMode="multiple" exportable="false" styleClass="checkbox-table" width="5%"></p:column>
+
+                        <p:column headerText="ID" sortBy="#{empresa.id}" filterBy="#{empresa.id}" width="10%">
+                            <h:outputText value="#{empresa.id}" />
+                        </p:column>
+                        <p:column headerText="Nome" sortBy="#{empresa.nome}" filterBy="#{empresa.nome}" width="20%">
+                            <h:outputText value="#{empresa.nome}" style="font-weight: 700"/>
+                        </p:column>
+                        <p:column headerText="CNPJ" sortBy="#{empresa.cnpj}" filterBy="#{empresa.cnpj}" width="15%">
+                            <h:outputText value="#{empresa.cnpj}"/>
+                        </p:column>
+                        <p:column headerText="Razão Social" sortBy="#{empresa.razao}" filterBy="#{empresa.razao}" width="35%">
+                            <h:outputText value="#{empresa.razao}" />
+                        </p:column>
+                        <p:column exportable="false" width="15%" styleClass="commands-table">
+                            <p:commandButton icon="pi pi-search-plus" update=":dialogs:manage-empresa-content"
+                                             oncomplete="PF('manageEmpresaDialog').show()"
+                                             styleClass="action-button rounded-button ui-button-primary" process="@this">
+                                <f:setPropertyActionListener value="#{empresa}" target="#{filialController.selectedEmpresa}" />
+                                <p:resetInput target=":dialogs:manage-empresa-content" />
+                            </p:commandButton>
+                            <p:commandButton icon="pi pi-pencil" update=":dialogs:manage-empresa-content"
+                                             oncomplete="PF('manageEmpresaDialog').show()"
+                                             styleClass="action-button rounded-button ui-button-success" process="@this">
+                                <f:setPropertyActionListener value="#{empresa}" target="#{filialController.selectedEmpresa}" />
+                                <p:resetInput target=":dialogs:manage-empresa-content" />
+                            </p:commandButton>
+                            <p:commandButton styleClass="ui-button-warning rounded-button action-button" icon="pi pi-trash"
+                                             process="@this"
+                                             oncomplete="PF('deleteEmpresaDialog').show()">
+                                <f:setPropertyActionListener value="#{empresa}" target="#{filialController.selectedEmpresa}" />
+                            </p:commandButton>
+                        </p:column>
+                    </p:dataTable>
+
+                    <p:contextMenu for="dt-empresas">
+                        <p:menuitem value="View" update=":dialogs:manage-empresa-content" icon="pi pi-search-plus"
+                                    oncomplete="PF('manageProductDialog').show()" actionListener="#{dtContextMenuView.viewProduct}"/>
+                        <p:menuitem value="Edit" update=":dialogs:manage-empresa-content" icon="pi pi-pencil"
+                                    oncomplete="PF('manageProductDialog').show()" actionListener="#{dtContextMenuView.editProduct}"/>
+                        <p:menuitem value="Delete" process="dt-empresas" icon="pi pi-times"
+                                    action="#{dtContextMenuView.deleteProduct}" oncomplete="PF('deleteEmpresaDialog').show()"/>
+                    </p:contextMenu>
+                </h:form>
+
+                <h:form id="dialogs">
+                    <p:dialog header="Detalhes da Empresa" showEffect="fade" modal="true" widgetVar="manageEmpresaDialog"
+                              responsive="true" blockScroll="true" maximizable="true" width="60%" fitViewport="true">
+                        <p:tabView id="manage-empresa-content" class="ui-fluid form" dynamic="true" cache="true">
+                            <p:tab title="Principais">
+<!--                        <p:outputPanel id="manage-empresa-content" class="ui-fluid form">-->
+                            <p:outputPanel rendered="#{not empty filialController.selectedEmpresa}">
+                                <p:graphicImage id="logotipo" rendered="#{not empty filialController.selectedEmpresa.logotipo}" value="#{filialController.selectedEmpresa.logotipo}"/>
+                                <div class="field">
+                                    <p:outputLabel for="idEmpresa">ID</p:outputLabel>
+                                    <p:inputText id="idEmpresa" value="#{filialController.selectedEmpresa.id}" required="false" readonly="true" disabled="true"/>
+                                </div>
+                                <div class="field">
+                                    <p:outputLabel for="nome">Nome</p:outputLabel>
+                                    <p:inputText id="nome" value="#{filialController.selectedEmpresa.nome}" required="true" />
+                                </div>
+                                <div class="field">
+                                    <p:outputLabel for="razaoSocial">Razão Social</p:outputLabel>
+                                    <p:inputText id="razaoSocial" value="#{filialController.selectedEmpresa.razao}" required="true" />
+                                </div>
+                                <div class="field">
+                                    <p:outputLabel for="cnpj">CNPJ</p:outputLabel>
+                                    <p:inputText id="cnpj" value="#{filialController.selectedEmpresa.cnpj}" />
+                                </div>
+                                <div class="field">
+                                    <p:outputLabel for="ie">Inscrição Estadual</p:outputLabel>
+                                    <p:inputText id="ie" value="#{filialController.selectedEmpresa.ie}" />
+                                </div>
+                                <div class="field-checkbox">
+                                    <p:outputLabel for="ativo">Ativo</p:outputLabel>
+                                    <p:toggleSwitch id="ativo" value="#{filialController.selectedEmpresa.ativo}" onIcon="pi pi-times" offIcon="pi pi-check" />
+                                </div>
+                            </p:outputPanel>
+                            </p:tab>
+                            <p:tab title="Contatos">
+                                <p:outputPanel rendered="#{not empty filialController.selectedEmpresa}">
+                                <div class="field">
+                                    <p:outputLabel for="telefone">Telefone</p:outputLabel>
+                                    <p:inputText id="telefone" value="#{filialController.selectedEmpresa.telefone}" />
+                                </div>
+                                <div class="field">
+                                    <p:outputLabel for="celular">Celular</p:outputLabel>
+                                    <p:inputText id="celular" value="#{filialController.selectedEmpresa.celular}" />
+                                </div>
+                                <div class="field">
+                                    <p:outputLabel for="whatsapp">Whatsap</p:outputLabel>
+                                    <p:inputText id="whatsapp" value="#{filialController.selectedEmpresa.whatsapp}" />
+                                </div>
+                                <div class="field">
+                                    <p:outputLabel for="email">E-mail</p:outputLabel>
+                                    <p:inputText id="email" value="#{filialController.selectedEmpresa.email}" />
+                                </div>
+                                </p:outputPanel>
+                            </p:tab>
+                            <p:tab title="Acessos">
+                                <p:outputPanel rendered="#{not empty filialController.selectedEmpresa}">
+                                <div class="field">
+                                    <p:outputLabel for="site">Site</p:outputLabel>
+                                    <p:inputText id="site" value="#{filialController.selectedEmpresa.site}" />
+                                </div>
+                                <div class="field">
+                                    <p:outputLabel for="login">Login</p:outputLabel>
+                                    <p:inputText id="login" value="#{filialController.selectedEmpresa.login}" />
+                                </div>
+                                <div class="field">
+                                    <p:outputLabel for="senha">Senha</p:outputLabel>
+                                    <p:inputText id="senha" value="#{filialController.selectedEmpresa.senha}" />
+                                </div>
+                                <div class="field">
+                                    <p:outputLabel for="codigoCliente">Código Cliente</p:outputLabel>
+                                    <p:inputText id="codigoCliente" value="#{filialController.selectedEmpresa.codigoCliente}" />
+                                </div>
+                                </p:outputPanel>
+                            </p:tab>
+                            <p:tab title="Endereço">
+                                <p:outputPanel rendered="#{not empty filialController.selectedEmpresa}">
+                                <div class="field">
+                                    <p:outputLabel for="endereco">Endereço</p:outputLabel>
+                                    <p:inputTextarea id="endereco" value="#{filialController.selectedEmpresa.endereco}" />
+                                </div>
+                                    <div class="field">
+                                        <p:outputLabel for="nomeEndereco">Nome</p:outputLabel>
+                                        <p:inputText id="nomeEndereco" value="#{filialController.selectedEmpresa.endereco.nome}" />
+                                    </div>
+                                    <div class="field">
+                                        <p:outputLabel for="logradouro">Logradouro</p:outputLabel>
+                                        <p:inputText id="logradouro" value="#{filialController.selectedEmpresa.endereco.logradouro}" />
+                                    </div>
+                                    <div class="field">
+                                        <p:outputLabel for="numero">Número</p:outputLabel>
+                                        <p:inputText id="numero" value="#{filialController.selectedEmpresa.endereco.numero}" />
+                                    </div>
+                                    <div class="field">
+                                        <p:outputLabel for="complemento">complemento</p:outputLabel>
+                                        <p:inputText id="complemento" value="#{filialController.selectedEmpresa.endereco.complemento}" />
+                                    </div>
+                                    <div class="field">
+                                        <p:outputLabel for="bairro">bairro</p:outputLabel>
+                                        <p:inputText id="bairro" value="#{filialController.selectedEmpresa.endereco.bairro}" />
+                                    </div>
+                                    <div class="field">
+                                        <p:outputLabel for="cidade">cidade</p:outputLabel>
+                                        <p:inputText id="cidade" value="#{filialController.selectedEmpresa.endereco.cidade}" />
+                                    </div>
+                                    <div class="field">
+                                        <p:outputLabel for="estado">estado</p:outputLabel>
+                                        <p:inputText id="estado" value="#{filialController.selectedEmpresa.endereco.estado}" />
+                                    </div>
+                                    <div class="field">
+                                        <p:outputLabel for="CEP">CEP</p:outputLabel>
+                                        <p:inputText id="CEP" value="#{filialController.selectedEmpresa.endereco.cep}" />
+                                    </div>
+                                    <div class="field">
+                                        <p:outputLabel for="pontoReferencia">ponto referencia</p:outputLabel>
+                                        <p:inputText id="pontoReferencia" value="#{filialController.selectedEmpresa.endereco.pontoReferencia}" />
+                                    </div>
+                                    <div class="field">
+                                        <p:outputLabel for="info">info</p:outputLabel>
+                                        <p:inputTextarea id="info" value="#{filialController.selectedEmpresa.endereco.info}" />
+                                    </div>
+                            </p:outputPanel>
+                            </p:tab>
+                            <p:tab title="Extras">
+                                <p:outputPanel rendered="#{not empty filialController.selectedEmpresa}">
+                                    <div class="field">
+                                        <p:outputLabel for="infoEmpresa">Info</p:outputLabel>
+                                        <p:inputTextarea id="infoEmpresa" value="#{filialController.selectedEmpresa.info}"/>
+                                    </div>
+                                </p:outputPanel>
+                            </p:tab>
+                        </p:tabView>
+<!--                        </p:outputPanel>-->
+                        <f:facet name="footer">
+                            <p:commandButton value="Save" icon="pi pi-check" actionListener="#{filialController.saveEmpresa}"
+                                             update="manage-empresa-content" process="manage-empresa-content @this" />
+                            <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('manageEmpresaDialog').hide()"
+                                             class="ui-button-secondary" type="button" />
+                        </f:facet>
+                    </p:dialog>
+
+                    <p:confirmDialog widgetVar="deleteEmpresaDialog" showEffect="fade" width="300"
+                                     message="Delete the empresa?" header="Confirm" severity="warn">
+                        <p:commandButton value="Yes" icon="pi pi-check" actionListener="#{filialController.deleteEmpresa}"
+                                         process="@this" update=":form:delete-empresas-button"
+                                         oncomplete="PF('deleteEmpresaDialog').hide()" />
+                        <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                         onclick="PF('deleteEmpresaDialog').hide()" />
+                    </p:confirmDialog>
+
+                    <p:confirmDialog global="true" showEffect="fade" width="300">
+                        <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-secondary"
+                                         icon="pi pi-times" />
+                    </p:confirmDialog>
+                </h:form>
+            </div>
+        </ui:define>
+    </ui:composition>
+</f:view>
+</html>

@@ -3,13 +3,14 @@
 *                             especificacao, especifica_modelo, 
 * Incluir MAC dos usuários que fazem acessos wi-fi
 */
-
-create database gestaoti;
+/*create database gestaoti;
 use gestaoti;
 /* create database gestaoti_teste;
 /* use gestaoti_teste;
 
 /* ---- USUÁRIO ---- */
+
+use testebd;
 create table usuario (
 	id int not null auto_increment,
     nome varchar(45) not null,
@@ -27,7 +28,7 @@ create table endereco (
 	id int not null auto_increment,
     logradouro enum ('Rua','Avenida','Travessa','Loteamento','Estrada','Vila','Rodovia','Quadra'),
 	nome varchar(45),
-	numero int(10) unsigned,
+	numero varchar(6),
     complemento varchar(100),
     bairro varchar(45),
     cidade varchar(45),
@@ -39,7 +40,6 @@ create table endereco (
 );
 
 /* alter table endereco add complemento varchar(100) after numero; */
-
 insert into endereco (logradouro, nome, numero,bairro,cidade,estado,cep)
 values ('Avenida', 'Evaldo Costa', 100, 'Sol e Mar', 'Macaé', 'RJ', 27940410),
        ('Avenida', 'Nossa Sra. da Ajuda',80,'Ajuda de Baixo','Macaé','RJ','27971390');
@@ -79,10 +79,10 @@ CREATE TABLE empresa (
 insert into  empresa (cnpj, ie, razao, nome, telefone, tipo_empresa, id_end)
 		values ('08472686000125', '78253665','Campos Pavani de Macae Com Alim Ltda', 'JPavani Matriz', '2237370460',  'Filial', 1),
 				('08472686000206', '78524960','Campos Pavani de Macae Com Alim Ltda', 'JPavani Filial', '2227622369', 'Filial', 2);
-    
+
 /* Inserts Empresa tipo Fabricante */ 
-insert into empresa (nome, razao, cnpj, ie, telefone, site, login, senha, info, id_end )
-values ('CISCO', 'Cisco System, Inc.', '00028666000581', null, '08008914972', 'www.cisco.com', 'jpavaniTI', 'JPav2015', 'e-mail: jpavani-informatica@uol.com.br - SMBS: 0800 892 1019', 3 );
+insert into empresa (nome, razao, cnpj, ie, telefone, site, login, senha, tipo_empresa, info, id_end )
+values ('CISCO', 'Cisco System, Inc.', '00028666000581', null, '08008914972', 'www.cisco.com', 'jpavaniTI', 'JPav2015', 'Fabricante', 'e-mail: jpavani-informatica@uol.com.br - SMBS: 0800 892 1019', 3 );
 
         
 /* --- LOCALIZAÇÃO --- */
@@ -92,7 +92,7 @@ create table localizacao (
 	filial int,
     ativo boolean default true,
     primary key (id),
-    foreign key (filial) references empresa (id)
+    foreign key (filial) references filial (id)
 );
 
 /* create table localizacao (
@@ -168,6 +168,14 @@ create table fornecedor (
     representante_email varchar(32),
     foreign key (id) references empresa(id)
 );
+
+create table filial(
+	id int not null primary key,
+    foreign key (id) references empresa(id)
+);
+
+insert into filial
+	values(1),(2);
 
 /* Criar campo para inserir fotos da Logo dos fabricantes e fornecedores */
 

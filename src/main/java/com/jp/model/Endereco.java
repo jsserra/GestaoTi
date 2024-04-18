@@ -26,21 +26,21 @@ public class Endereco implements Serializable{
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "nome")
+    @Column(name = "nome", length = 45)
     private String nome;
-    @Column(name = "logradouro")
+    @Column(name = "logradouro", length = 45)
     private String logradouro;
-    @Column(name = "numero")
+    @Column(name = "numero", length = 6)
     private String numero;
-    @Column(name = "complemento")
+    @Column(name = "complemento", length = 100)
     private String complemento;
-    @Column(name = "bairro")
+    @Column(name = "bairro", length = 45)
     private String bairro;
-    @Column(name = "cidade")
+    @Column(name = "cidade", length = 45)
     private String cidade;
     @Column(name = "estado")
     private UF estado;
-    @Column(name = "cep")
+    @Column(name = "cep", length = 8)
     private String cep;
     @Column(name = "ponto_referencia")
     private String pontoReferencia;

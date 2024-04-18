@@ -6,6 +6,7 @@ package com.jp.model;
 
 import com.jp.model.enums.TipoEmpresa;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 import java.io.Serializable;
 
@@ -27,40 +28,41 @@ public class Empresa implements Serializable {
     @Column(name = "id")
     private Integer id;
     
-    @Column(name = "cnpj")
+    @Column(name = "cnpj", length = 14)
     private String cnpj;
     
-    @Column(name = "ie")
+    @Column(name = "ie", length = 10)
     private String ie;
 
-    @Column(name = "razao")
+    @Column(name = "razao", length = 45, nullable = false)
+    @NotBlank
     private String razao;
 
-    @Column(name = "nome")
+    @Column(name = "nome", length = 45, nullable = false)
     private String nome;
 
-    @Column(name = "telefone")
+    @Column(name = "telefone", length = 11)
     private String telefone;
     
-    @Column(name = "celular")
+    @Column(name = "celular", length = 11)
     private String celular;
 
-    @Column(name = "whatsapp")
+    @Column(name = "whatsapp", length = 11)
     private String whatsapp;
 
-    @Column(name = "email")
+    @Column(name = "email", length = 32)
     private String email;
     
-    @Column(name = "site")
+    @Column(name = "site", length = 54)
     private String site;
     
-    @Column(name = "login")
+    @Column(name = "login", length = 32)
     private String login;
     
-    @Column(name = "senha")
+    @Column(name = "senha", length = 24)
     private String senha;
     
-    @Column(name = "codigo_cliente")
+    @Column(name = "codigo_cliente", length = 24)
     private String codigoCliente;
 //
 //    @Column(name = "tipo_empresa")

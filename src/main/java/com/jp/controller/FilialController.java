@@ -41,17 +41,13 @@ public class FilialController implements Serializable {
         return daoFilial.getAll();
     }
 
-    public Filial getSelectedEmpresa() {
-        return selectedEmpresa;
-    }
+    public Filial getSelectedEmpresa() throws InterruptedException { return selectedEmpresa; }
 
     public void setSelectedEmpresa(Filial selectedEmpresa) {
         this.selectedEmpresa = selectedEmpresa;
     }
 
-    public List<Filial> getSelectedEmpresas() {
-        return selectedEmpresas;
-    }
+    public List<Filial> getSelectedEmpresas() { return selectedEmpresas; }
 
     public void setSelectedEmpresas(List<Filial> selectedEmpresas) {
         this.selectedEmpresas = selectedEmpresas;
@@ -114,6 +110,11 @@ public class FilialController implements Serializable {
         }catch (Exception e){
             System.out.println(e);
         }
+    }
+
+    public void callViewDialog(){
+        PrimeFaces current = PrimeFaces.current();
+        current.executeScript("disableModalFormInputs();");
     }
 
 }

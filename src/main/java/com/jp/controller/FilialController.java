@@ -4,25 +4,31 @@
  */
 package com.jp.controller;
 
-import com.jp.dao.EnderecoDao;
 import com.jp.dao.FilialDao;
 import com.jp.model.Filial;
-import jakarta.annotation.ManagedBean;
+import com.jp.service.BytesConverter;
+import com.jp.view.util.ExceptionsUtil;
+import com.jp.view.util.MessagesUtil;
 import jakarta.ejb.EJB;
-import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.ExternalContext;
 import jakarta.faces.context.FacesContext;
-import jakarta.faces.view.ViewScoped;
+import jakarta.faces.event.PhaseId;
 import jakarta.inject.Named;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletResponse;
 import org.primefaces.PrimeFaces;
-
+import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
+import org.primefaces.model.file.UploadedFile;
+import java.io.ByteArrayInputStream;
 import java.io.Serializable;
 import java.util.List;
-import java.util.UUID;
 
 @Named
-@ViewScoped
+@SessionScoped
 public class FilialController implements Serializable {
     private static final long serialVersionUID = 1L;
     @EJB
@@ -33,6 +39,10 @@ public class FilialController implements Serializable {
 
     private List<Filial> selectedEmpresas;
 
+    private boolean viewFormMode = true;
+
+    private transient UploadedFile file;
+
     public String acessar(){
         return "/empresas/listagem?faces-redirect=true";
     }
@@ -41,7 +51,7 @@ public class FilialController implements Serializable {
         return daoFilial.getAll();
     }
 
-    public Filial getSelectedEmpresa() throws InterruptedException { return selectedEmpresa; }
+    public Filial getSelectedEmpresa() { return selectedEmpresa; }
 
     public void setSelectedEmpresa(Filial selectedEmpresa) {
         this.selectedEmpresa = selectedEmpresa;
@@ -55,22 +65,23 @@ public class FilialController implements Serializable {
 
     public void openNew() {
         this.selectedEmpresa = new Filial();
+        this.callEditDialog();
     }
 
-    public void saveFilial() {
+    public void saveEmpresa() {
         try {
             if (this.selectedEmpresa.getId() == null) {
                 daoFilial.persist(this.selectedEmpresa);
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Empresa Adicionada"));
+                MessagesUtil.infoMessage("Empresa criada", daoFilial.getMensagem());
             } else {
                 daoFilial.merge(this.selectedEmpresa);
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Empresa Atualizada"));
+                MessagesUtil.infoMessage("Empresa Atualizada", daoFilial.getMensagem());
             }
 
             PrimeFaces.current().executeScript("PF('manageEmpresaDialog').hide()");
-            PrimeFaces.current().ajax().update("form:messages", "form:dt-products");
+            PrimeFaces.current().ajax().update("empresas-form:messages", "empresas-form:dt-products");
         }catch(Exception e){
-            System.out.println(e);
+            MessagesUtil.errorMessage("Erro ao gravar", ExceptionsUtil.getExceptionMessage(e));
         }
     }
 
@@ -79,7 +90,7 @@ public class FilialController implements Serializable {
             daoFilial.remove(this.selectedEmpresa);
             this.selectedEmpresa = null;
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Empresa Excluída"));
-            PrimeFaces.current().ajax().update("form:messages", "form:dt-products");
+            PrimeFaces.current().ajax().update("empresas-form:messages", "empresas-form:dt-products");
         }catch (Exception e) {
             System.out.println(e);
         }
@@ -105,7 +116,7 @@ public class FilialController implements Serializable {
             }
             this.selectedEmpresas = null;
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Empresas Excluídas"));
-            PrimeFaces.current().ajax().update("form:messages", "form:dt-products");
+            PrimeFaces.current().ajax().update("empresas-form:messages", "empresas-form:dt-products");
             PrimeFaces.current().executeScript("PF('dtEmpresas').clearFilters()");
         }catch (Exception e){
             System.out.println(e);
@@ -113,8 +124,50 @@ public class FilialController implements Serializable {
     }
 
     public void callViewDialog(){
-        PrimeFaces current = PrimeFaces.current();
-        current.executeScript("disableModalFormInputs();");
+        viewFormMode = true;
     }
 
+    public void callEditDialog(){
+        viewFormMode = false;
+    }
+
+    public boolean getViewFormMode(){
+        return viewFormMode;
+    }
+
+    public void logoUpload(FileUploadEvent event){
+        try {
+            ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+            HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+            FacesContext facesContext = FacesContext.getCurrentInstance();
+            ServletContext servletContext = (ServletContext) facesContext.getExternalContext().getContext();
+            selectedEmpresa.setLogotipo(event.getFile().getContent());
+            String nomeArquivo = file.getFileName();
+            MessagesUtil.infoMessage("Arquivo " + nomeArquivo + " carregado com sucesso");
+        }catch (Exception e){
+            MessagesUtil.errorMessage("Erro ao enviar foto", ExceptionsUtil.getExceptionMessage(e));
+        }
+    }
+
+    public void removeLogo(){
+        this.selectedEmpresa.setLogotipo(null);
+    }
+
+    public UploadedFile getFile() {
+        return file;
+    }
+
+    public StreamedContent getEmpresaLogo(){
+        FacesContext fc = FacesContext.getCurrentInstance();
+
+        if(fc.getRenderResponse() || fc.getCurrentPhaseId() == PhaseId.RENDER_RESPONSE || this.selectedEmpresa == null){
+            return new DefaultStreamedContent();
+        }
+
+        if(selectedEmpresa.getLogotipo() != null){
+            return DefaultStreamedContent.builder().contentType("image/png").name("logo").stream(() -> new ByteArrayInputStream(selectedEmpresa.getLogotipo())).build();
+        } else{
+            return new DefaultStreamedContent();
+        }
+    }
 }

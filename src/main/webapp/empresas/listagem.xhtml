@@ -18,14 +18,14 @@
         <ui:define name="content">
             <h1>Empresas</h1>
             <div class="card crud-demo">
-                <h:form id="form">
+                <h:form id="empresas-form">
                     <p:growl id="messages" showDetail="true" />
                     <p:toolbar>
                         <p:toolbarGroup>
                             <p:commandButton value="Incluir" icon="pi pi-plus" actionListener="#{filialController.openNew}"
-                                             update=":dialogs:manage-empresa-content" oncomplete="PF('manageEmpresaDialog').show()"
+                                             update=":dialogs:manage-empresa" oncomplete="PF('manageEmpresaDialog').show()"
                                              styleClass="ui-button-success" style="margin-right: .5rem">
-                                <p:resetInput target=":dialogs:manage-empresa-content" />
+                                <p:resetInput target=":dialogs:manage-empresa" />
                             </p:commandButton>
                             <p:commandButton id="delete-empresas-button" value="#{filialController.deleteButtonMessage}"
                                              icon="pi pi-trash" actionListener="#{filialController.deleteSelectedEmpresas}"
@@ -50,11 +50,11 @@
                             </div>
                         </f:facet>
 
-                        <p:ajax event="rowSelect" update=":form:delete-empresas-button" />
-                        <p:ajax event="rowUnselect" update=":form:delete-empresas-button" />
-                        <p:ajax event="rowSelectCheckbox" update=":form:delete-empresas-button" />
-                        <p:ajax event="rowUnselectCheckbox" update=":form:delete-empresas-button" />
-                        <p:ajax event="toggleSelect" update=":form:delete-empresas-button" />
+                        <p:ajax event="rowSelect" update=":empresas-form:delete-empresas-button" />
+                        <p:ajax event="rowUnselect" update=":empresas-form:delete-empresas-button" />
+                        <p:ajax event="rowSelectCheckbox" update=":empresas-form:delete-empresas-button" />
+                        <p:ajax event="rowUnselectCheckbox" update=":empresas-form:delete-empresas-button" />
+                        <p:ajax event="toggleSelect" update=":empresas-form:delete-empresas-button" />
 
                         <p:column selectionMode="multiple" exportable="false" styleClass="checkbox-table" width="5%"></p:column>
 
@@ -71,18 +71,19 @@
                             <h:outputText value="#{empresa.razao}" />
                         </p:column>
                         <p:column exportable="false" width="15%" styleClass="commands-table">
-                            <p:commandButton icon="pi pi-search-plus" update=":dialogs:manage-empresa-content"
-                                             onclick="#{filialController.callViewDialog}"
+                            <p:commandButton icon="pi pi-search-plus" update=":dialogs:manage-empresa"
+                                             actionListener="#{filialController.callViewDialog()}"
                                              oncomplete="PF('manageEmpresaDialog').show()"
                                              styleClass="action-button rounded-button ui-button-primary" process="@this">
                                 <f:setPropertyActionListener value="#{empresa}" target="#{filialController.selectedEmpresa}" />
-                                <p:resetInput target=":dialogs:manage-empresa-content" />
+                                <p:resetInput target=":dialogs:manage-empresa" />
                             </p:commandButton>
-                            <p:commandButton icon="pi pi-pencil" update=":dialogs:manage-empresa-content"
+                            <p:commandButton icon="pi pi-pencil" update=":dialogs:manage-empresa"
+                                             actionListener="#{filialController.callEditDialog()}"
                                              oncomplete="PF('manageEmpresaDialog').show()"
                                              styleClass="action-button rounded-button ui-button-success" process="@this">
                                 <f:setPropertyActionListener value="#{empresa}" target="#{filialController.selectedEmpresa}" />
-                                <p:resetInput target=":dialogs:manage-empresa-content" />
+                                <p:resetInput target=":dialogs:manage-empresa" />
                             </p:commandButton>
                             <p:commandButton styleClass="ui-button-warning rounded-button action-button" icon="pi pi-trash"
                                              process="@this"
@@ -93,49 +94,56 @@
                     </p:dataTable>
 
                     <p:contextMenu for="dt-empresas">
-                        <p:menuitem value="View" update=":dialogs:manage-empresa-content" icon="pi pi-search-plus"
-                                    oncomplete="PF('manageProductDialog').show()" actionListener="#{dtContextMenuView.viewProduct}"/>
-                        <p:menuitem value="Edit" update=":dialogs:manage-empresa-content" icon="pi pi-pencil"
-                                    oncomplete="PF('manageProductDialog').show()" actionListener="#{dtContextMenuView.editProduct}"/>
-                        <p:menuitem value="Delete" process="dt-empresas" icon="pi pi-times"
-                                    action="#{dtContextMenuView.deleteProduct}" oncomplete="PF('deleteEmpresaDialog').show()"/>
                     </p:contextMenu>
                 </h:form>
 
                 <h:form id="dialogs">
-                    <p:dialog header="Detalhes da Empresa" showEffect="fade" modal="true" widgetVar="manageEmpresaDialog"
+                    <p:dialog id="manage-empresa"  header="Detalhes da Empresa" showEffect="fade" modal="true" widgetVar="manageEmpresaDialog"
                               responsive="true" blockScroll="true" maximizable="true" width="60%" fitViewport="true">
-                        <p:tabView id="manage-empresa-content" dynamic="true" cache="true">
+                        <p:tabView dynamic="true" cache="false">
                             <p:tab title="Identificação">
-<!--                        <p:outputPanel id="manage-empresa-content" class="ui-fluid form">-->
                                 <p:outputPanel rendered="#{not empty filialController.selectedEmpresa}" deferred="true" class="ui-fluid formgrid grid">
                                     <f:facet name="loading">
                                         <p:skeleton width="100%"/>
                                     </f:facet>
-                                    <p:graphicImage id="logotipo" rendered="#{not empty filialController.selectedEmpresa.logotipo}" value="#{filialController.selectedEmpresa.logotipo}"/>
-                                    <div class="field col-5 md-6">
+                                    <div class="field grid col-12 md-6">
+                                        <h:outputText>Logotipo</h:outputText>
+                                        <p:fileUpload class="col-3" listener="#{filialController.logoUpload}" id="uploadLogo"
+                                                      auto="true" mode="simple" skinSimple="true" allowTypes="/(\.|\/)(png|jpg|jpeg)$/" sizeLimit="10000000"
+                                                      invalidSizeMessage="O tamanho máximo para upload de um arquivo é de 10MB"
+                                                      invalidFileMessage="São aceitos apenas arquivos .jpeg / .jpg / .png"
+                                                      fileLimitMessage="Apenas um arquivo pode ser enviado por vez"
+                                                      disabled="#{filialController.viewFormMode}" label="Inserir logo" update="logotipo-space logotipo" process="@this">
+                                        </p:fileUpload>
+                                    <p:outputPanel class="col-9" styleClass="text-center" id="logotipo-space" loaded="#{not empty filialController.selectedEmpresa.logotipo}" deferred="true" deferredMode="load">
+                                        <p:graphicImage id="logotipo" value="#{filialController.empresaLogo}" styleClass="empresa-logo" cache="false"/>
+                                        <p:commandButton ajax="true" value="Remover" icon="pi pi-times" actionListener="#{filialController.removeLogo}" rendered="#{not empty filialController.selectedEmpresa.logotipo}"
+                                                         styleClass="ui-button-secondary w-5" disabled="#{filialController.viewFormMode}" update="logotipo-space" process="@this"/>
+                                    </p:outputPanel>
+                                    </div>
+                                    <div class="field col-4 md-6">
                                         <p:outputLabel for="idEmpresa">ID</p:outputLabel>
                                         <p:inputText id="idEmpresa" value="#{filialController.selectedEmpresa.id}" required="false" readonly="true" disabled="true"/>
                                     </div>
-                                    <div class="field col-12 md-6">
+                                    <div class="field col-8 md-6">
                                         <p:outputLabel for="nome">Nome</p:outputLabel><br/>
-                                        <p:inputText id="nome" value="#{filialController.selectedEmpresa.nome}" required="true" requiredMessage="Um nome deve ser informado" maxlength="45" size="45"/>
+                                        <p:inputText id="nome" value="#{filialController.selectedEmpresa.nome}" required="true" requiredMessage="Um nome deve ser informado" maxlength="45" size="45" disabled="#{filialController.viewFormMode}"/>
                                     </div>
                                     <div class="field col-12 md-6">
                                         <p:outputLabel for="razaoSocial">Razão Social</p:outputLabel><br/>
-                                        <p:inputText id="razaoSocial" value="#{filialController.selectedEmpresa.razao}" required="true" requiredMessage="Uma razão deve ser informado" maxlength="45" size="45" />
+                                        <p:inputText id="razaoSocial" value="#{filialController.selectedEmpresa.razao}" required="true" requiredMessage="Uma razão deve ser informado" maxlength="45" size="45" disabled="#{filialController.viewFormMode}" />
                                     </div>
                                     <div class="field col-6 md-6">
                                         <p:outputLabel for="cnpj">CNPJ</p:outputLabel><br/>
-                                        <p:inputText id="cnpj" value="#{filialController.selectedEmpresa.cnpj}" maxlength="14" />
+                                        <p:inputText id="cnpj" value="#{filialController.selectedEmpresa.cnpj}" maxlength="14" disabled="#{filialController.viewFormMode}" />
                                     </div>
                                     <div class="field col-6 md-6">
                                         <p:outputLabel for="ie">Inscrição Estadual</p:outputLabel><br/>
-                                        <p:inputText id="ie" value="#{filialController.selectedEmpresa.ie}" maxlength="10"/>
+                                        <p:inputText id="ie" value="#{filialController.selectedEmpresa.ie}" maxlength="10" disabled="#{filialController.viewFormMode}" />
                                     </div>
                                     <div class="field">
                                         <p:outputLabel for="ativo">Ativo</p:outputLabel><br/>
-                                        <p:toggleSwitch id="ativo" value="#{filialController.selectedEmpresa.ativo}" onIcon="pi pi-check" offIcon="pi pi-times" />
+                                        <p:toggleSwitch id="ativo" value="#{filialController.selectedEmpresa.ativo}" onIcon="pi pi-check" offIcon="pi pi-times" disabled="#{filialController.viewFormMode}" />
                                     </div>
                                 </p:outputPanel>
                             </p:tab>
@@ -144,19 +152,19 @@
                                 <p:outputPanel rendered="#{not empty filialController.selectedEmpresa}" class="ui-fluid formgrid grid">
                                     <div class="field p-col col-7 md-6">
                                         <p:outputLabel for="telefone">Telefone</p:outputLabel>
-                                        <p:inputText id="telefone" value="#{filialController.selectedEmpresa.telefone}" maxlength="11"/>
+                                        <p:inputText id="telefone" value="#{filialController.selectedEmpresa.telefone}" maxlength="11" disabled="#{filialController.viewFormMode}" />
                                     </div>
                                     <div class="field col-7 md-6 col">
                                         <p:outputLabel for="celular">Celular</p:outputLabel>
-                                        <p:inputText id="celular" value="#{filialController.selectedEmpresa.celular}" maxlength="11"/>
+                                        <p:inputText id="celular" value="#{filialController.selectedEmpresa.celular}" maxlength="11" disabled="#{filialController.viewFormMode}" />
                                     </div>
                                     <div class="field col-7 md-6">
                                         <p:outputLabel for="whatsapp">Whatsapp</p:outputLabel>
-                                        <p:inputText id="whatsapp" value="#{filialController.selectedEmpresa.whatsapp}" maxlength="11"/>
+                                        <p:inputText id="whatsapp" value="#{filialController.selectedEmpresa.whatsapp}" maxlength="11" disabled="#{filialController.viewFormMode}" />
                                     </div>
                                     <div class="field col-7 md-6">
                                         <p:outputLabel for="email">E-mail</p:outputLabel>
-                                        <p:inputText id="email" value="#{filialController.selectedEmpresa.email}" maxlength="32"/>
+                                        <p:inputText id="email" value="#{filialController.selectedEmpresa.email}" maxlength="32" disabled="#{filialController.viewFormMode}" />
                                     </div>
                                 </p:outputPanel>
                             </p:tab>
@@ -165,19 +173,19 @@
                                 <p:outputPanel rendered="#{not empty filialController.selectedEmpresa}" class="ui-fluid formgrid grid">
                                     <div class="field col-12 md-6">
                                         <p:outputLabel for="site">Site</p:outputLabel>
-                                        <p:inputText id="site" value="#{filialController.selectedEmpresa.site}" maxlength="54"/>
+                                        <p:inputText id="site" value="#{filialController.selectedEmpresa.site}" maxlength="54" disabled="#{filialController.viewFormMode}" />
                                     </div>
                                     <div class="field col-7 md-6">
                                         <p:outputLabel for="login">Login</p:outputLabel>
-                                        <p:inputText id="login" value="#{filialController.selectedEmpresa.login}" maxlength="32"/>
+                                        <p:inputText id="login" value="#{filialController.selectedEmpresa.login}" maxlength="32" disabled="#{filialController.viewFormMode}" />
                                     </div>
                                     <div class="field col-7 md-6">
                                         <p:outputLabel for="senha">Senha</p:outputLabel>
-                                        <p:inputText id="senha" value="#{filialController.selectedEmpresa.senha}" maxlength="24"/>
+                                        <p:inputText id="senha" value="#{filialController.selectedEmpresa.senha}" maxlength="24" disabled="#{filialController.viewFormMode}"/>
                                     </div>
                                     <div class="field col-12 md-6">
                                         <p:outputLabel for="codigoCliente">Código Cliente</p:outputLabel>
-                                        <p:inputText id="codigoCliente" value="#{filialController.selectedEmpresa.codigoCliente}" maxlength="24"/>
+                                        <p:inputText id="codigoCliente" value="#{filialController.selectedEmpresa.codigoCliente}" maxlength="24" disabled="#{filialController.viewFormMode}"/>
                                     </div>
                                 </p:outputPanel>
                             </p:tab>
@@ -185,43 +193,43 @@
                                 <p:outputPanel rendered="#{not empty filialController.selectedEmpresa}" class="ui-fluid formgrid grid">
                                     <div class="field col-6 md-6">
                                         <p:outputLabel for="logradouro">Logradouro</p:outputLabel>
-                                        <p:inputText id="logradouro" value="#{filialController.selectedEmpresa.endereco.logradouro}"/>
+                                        <p:inputText id="logradouro" value="#{filialController.selectedEmpresa.endereco.logradouro}" disabled="#{filialController.viewFormMode}"/>
                                     </div>
                                     <div class="field col-6 md-6">
                                         <p:outputLabel for="nomeEndereco">Nome</p:outputLabel>
-                                        <p:inputText id="nomeEndereco" value="#{filialController.selectedEmpresa.endereco.nome}" maxlength="45"/>
+                                        <p:inputText id="nomeEndereco" value="#{filialController.selectedEmpresa.endereco.nome}" maxlength="45" disabled="#{filialController.viewFormMode}"/>
                                     </div>
                                     <div class="field col-4 md-6">
                                         <p:outputLabel for="numero">Número</p:outputLabel>
-                                        <p:inputText id="numero" value="#{filialController.selectedEmpresa.endereco.numero}" />
+                                        <p:inputText id="numero" value="#{filialController.selectedEmpresa.endereco.numero}" class="form-field" disabled="#{filialController.viewFormMode}"/>
                                     </div>
                                     <div class="field col-12 md-6">
                                         <p:outputLabel for="complemento">Complemento</p:outputLabel>
-                                        <p:inputText id="complemento" value="#{filialController.selectedEmpresa.endereco.complemento}" maxlength="100"/>
+                                        <p:inputText id="complemento" value="#{filialController.selectedEmpresa.endereco.complemento}" maxlength="100" disabled="#{filialController.viewFormMode}"/>
                                     </div>
                                     <div class="field col-6 md-6">
                                         <p:outputLabel for="bairro">Bairro</p:outputLabel>
-                                        <p:inputText id="bairro" value="#{filialController.selectedEmpresa.endereco.bairro}" maxlength="45"/>
+                                        <p:inputText id="bairro" value="#{filialController.selectedEmpresa.endereco.bairro}" maxlength="45" disabled="#{filialController.viewFormMode}"/>
                                     </div>
                                     <div class="field col-6 md-6">
                                         <p:outputLabel for="cidade">Cidade</p:outputLabel>
-                                        <p:inputText id="cidade" value="#{filialController.selectedEmpresa.endereco.cidade}" maxlength="45"/>
+                                        <p:inputText id="cidade" value="#{filialController.selectedEmpresa.endereco.cidade}" maxlength="45" disabled="#{filialController.viewFormMode}"/>
                                     </div>
                                     <div class="field col-6 md-6">
                                         <p:outputLabel for="estado">Estado</p:outputLabel>
-                                        <p:inputText id="estado" value="#{filialController.selectedEmpresa.endereco.estado}"/>
+                                        <p:inputText id="estado" value="#{filialController.selectedEmpresa.endereco.estado}" disabled="#{filialController.viewFormMode}"/>
                                     </div>
                                     <div class="field col-6 md-6">
                                         <p:outputLabel for="CEP">CEP</p:outputLabel>
-                                        <p:inputText id="CEP" value="#{filialController.selectedEmpresa.endereco.cep}" maxlength="8"/>
+                                        <p:inputText id="CEP" value="#{filialController.selectedEmpresa.endereco.cep}" maxlength="8" disabled="#{filialController.viewFormMode}"/>
                                     </div>
                                     <div class="field col-12 md-6">
                                         <p:outputLabel for="pontoReferencia">Ponto de Referência</p:outputLabel>
-                                        <p:inputTextarea id="pontoReferencia" value="#{filialController.selectedEmpresa.endereco.pontoReferencia}"/>
+                                        <p:inputTextarea id="pontoReferencia" value="#{filialController.selectedEmpresa.endereco.pontoReferencia}" disabled="#{filialController.viewFormMode}"/>
                                     </div>
                                     <div class="field col-12 md-6">
                                         <p:outputLabel for="info">Informações sobre o endereço</p:outputLabel>
-                                        <p:inputTextarea id="info" value="#{filialController.selectedEmpresa.endereco.info}"/>
+                                        <p:inputTextarea id="info" value="#{filialController.selectedEmpresa.endereco.info}" disabled="#{filialController.viewFormMode}" />
                                     </div>
                             </p:outputPanel>
                             </p:tab>
@@ -229,38 +237,38 @@
                                 <p:outputPanel rendered="#{not empty filialController.selectedEmpresa}" class="ui-fluid formgrid grid">
                                     <div class="field col-12 md-6">
                                         <p:outputLabel for="infoEmpresa">Mais informações</p:outputLabel>
-                                        <p:inputTextarea id="infoEmpresa" value="#{filialController.selectedEmpresa.info}"/>
+                                        <p:inputTextarea id="infoEmpresa" value="#{filialController.selectedEmpresa.info}" disabled="#{filialController.viewFormMode}" />
                                     </div>
                                 </p:outputPanel>
                             </p:tab>
                         </p:tabView>
-<!--                        </p:outputPanel>-->
-                        <f:facet name="footer">
-                            <p:commandButton value="Save" icon="pi pi-check" actionListener="#{filialController.saveEmpresa}"
-                                             update="manage-empresa-content" process="manage-empresa-content @this" />
-                            <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('manageEmpresaDialog').hide()"
+                        <f:facet name="footer" id="footer-manage-empresa" rendered="#{filialController.viewFormMode}">
+                            <p:commandButton value="Salvar" icon="pi pi-check" actionListener="#{filialController.saveEmpresa}"
+                                             update="manage-empresa :empresas-form:dt-empresas" process="manage-empresa @this" rendered="#{!filialController.viewFormMode}"  />
+                            <p:commandButton value="Cancelar" icon="pi pi-times" onclick="PF('manageEmpresaDialog').hide()"
                                              class="ui-button-secondary" type="button" />
                         </f:facet>
                     </p:dialog>
 
                     <p:confirmDialog widgetVar="deleteEmpresaDialog" showEffect="fade" width="300"
-                                     message="Delete the empresa?" header="Confirm" severity="warn">
-                        <p:commandButton value="Yes" icon="pi pi-check" actionListener="#{filialController.deleteEmpresa}"
-                                         process="@this" update=":form:delete-empresas-button"
+                                     message="Deseja realmente deletar a empresa?" header="Confirm" severity="warn">
+                        <p:commandButton value="Sim" icon="pi pi-check" actionListener="#{filialController.deleteEmpresa}"
+                                         process="@this" update=":empresas-form:delete-empresas-button"
                                          oncomplete="PF('deleteEmpresaDialog').hide()" />
-                        <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                        <p:commandButton value="Não" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
                                          onclick="PF('deleteEmpresaDialog').hide()" />
                     </p:confirmDialog>
 
                     <p:confirmDialog global="true" showEffect="fade" width="300">
-                        <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
-                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-secondary"
+                        <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+                        <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no ui-button-secondary"
                                          icon="pi pi-times" />
                     </p:confirmDialog>
                 </h:form>
             </div>
-
-            <h:outputScript library="scripts" name="empresas.js"/>
+        </ui:define>
+        <ui:define name="footer">
+            <h:outputScript library="javascript" name="empresas.js"></h:outputScript>
         </ui:define>
     </ui:composition>
 </f:view>

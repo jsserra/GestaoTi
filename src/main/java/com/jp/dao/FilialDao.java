@@ -5,7 +5,7 @@
 package com.jp.dao;
 
 import com.jp.model.Filial;
-import com.jp.model.util.UtilMessages;
+import jakarta.ejb.Stateful;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -20,7 +20,7 @@ import java.util.List;
  * @author everson
  */
 
-@Stateless
+@Stateful
 public class FilialDao implements Serializable {
     private static final long serialVersionUID = 1L;
     @PersistenceContext(unitName = "gestaotiPU")
@@ -81,9 +81,9 @@ public class FilialDao implements Serializable {
     public void persist(Filial object) throws Exception{
 //        try{
             //em.getTransaction().begin();
-            em.persist(object);
+        em.persist(object);
+        mensagem = "Salvo com sucesso!";
            // em.getTransaction().commit();
-//            mensagem = "Objeto persistido com sucesso!";
 //            return true;
 //        }catch (Exception ex){
 //            //rollback();
@@ -96,8 +96,8 @@ public class FilialDao implements Serializable {
 //        try{
             //em.getTransaction().begin();
             em.merge(object);
+            mensagem = "Editado com sucesso!";
             //em.getTransaction().commit();
-//            mensagem = "Objeto persistido com sucesso!";
 //            return true;
 //        }catch (Exception ex){
             //rollback();

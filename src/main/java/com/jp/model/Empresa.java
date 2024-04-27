@@ -18,69 +18,71 @@ import java.io.Serializable;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "tipo_empresa")
+//@DiscriminatorColumn(name = "tipo_empresa")
 @Table(name = "empresa")
 public class Empresa implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    protected static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "seq_empresa", sequenceName = "seq_empresa_id", allocationSize = 1)
+    @GeneratedValue(generator = "seq_empresa", strategy = GenerationType.SEQUENCE)
     @Column(name = "id")
-    private Integer id;
+    protected Integer id;
     
-    @Column(name = "cnpj", length = 14)
-    private String cnpj;
+    @Column(name = "cnpj", length = 14, unique = true, nullable = true)
+    protected String cnpj;
     
-    @Column(name = "ie", length = 10)
-    private String ie;
+    @Column(name = "ie", length = 10, unique = true, nullable = true)
+    protected String ie;
 
     @Column(name = "razao", length = 45, nullable = false)
     @NotBlank
-    private String razao;
+    protected String razao;
 
     @Column(name = "nome", length = 45, nullable = false)
-    private String nome;
+    protected String nome;
 
     @Column(name = "telefone", length = 11)
-    private String telefone;
+    protected String telefone;
     
     @Column(name = "celular", length = 11)
-    private String celular;
+    protected String celular;
 
     @Column(name = "whatsapp", length = 11)
-    private String whatsapp;
+    protected String whatsapp;
 
     @Column(name = "email", length = 32)
-    private String email;
+    protected String email;
     
     @Column(name = "site", length = 54)
-    private String site;
+    protected String site;
     
     @Column(name = "login", length = 32)
-    private String login;
+    protected String login;
     
     @Column(name = "senha", length = 24)
-    private String senha;
+    protected String senha;
     
     @Column(name = "codigo_cliente", length = 24)
-    private String codigoCliente;
-//
-//    @Column(name = "tipo_empresa")
-//    private TipoEmpresa tipoEmpresa;
+    protected String codigoCliente;
+
+    @Column(name = "tipo_empresa")
+    @Enumerated(EnumType.STRING)
+    protected TipoEmpresa tipoEmpresa;
 
     @Lob
-    @Column(name = "logotipo")
-    private String logotipo;
+    @Column(name = "logotipo", length=100000)
+    protected byte[] logotipo;
 
     @Column(name = "info")
-    private String info;
+    protected String info;
 
     @Column(name = "ativo")
-    private Boolean ativo;
+    protected Boolean ativo = true;
 
     @OneToOne
     @JoinColumn(name = "id_end", referencedColumnName = "id", nullable = true)
-    private Endereco endereco;
+    protected Endereco endereco;
 
     public Empresa() {
     }
@@ -207,11 +209,11 @@ public class Empresa implements Serializable {
 //        this.tipoEmpresa = tipoEmpresa;
 //    }
 
-    public String getLogotipo() {
+    public byte[] getLogotipo() {
         return logotipo;
     }
 
-    public void setLogotipo(String logotipo) {
+    public void setLogotipo(byte[] logotipo) {
         this.logotipo = logotipo;
     }
 

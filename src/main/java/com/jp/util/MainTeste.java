@@ -4,7 +4,10 @@
  */
 package com.jp.util;
 
+import com.jp.dao.FilialDao;
 import com.jp.model.Fabricante;
+import com.jp.model.Filial;
+import jakarta.ejb.EJB;
 
 
 /**
@@ -13,15 +16,27 @@ import com.jp.model.Fabricante;
  */
 public class MainTeste {
 
+    @EJB
+    public static FilialDao dao;
+
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         // TODO code application logic here
         
-        Fabricante fab = new Fabricante();
-        
-     
+       Filial filial = new Filial();
+
+       filial.setNome("Testani Supermercados");
+       filial.setRazao("Testani Comercio de Alimentos");
+       filial.setCnpj("08123456");
+       filial.setIe("29823784");
+
+       try {
+           dao.persist(filial);
+       }catch (Exception e) {
+           System.out.println(e);
+       }
     }
     
 }

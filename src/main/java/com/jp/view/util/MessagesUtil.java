@@ -1,21 +1,9 @@
-package com.jp.model.util;
+package com.jp.view.util;
 
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 
-public class UtilMessages {
-    public static String getExceptionMessage(Exception ex){
-        while(ex.getCause() != null){
-            ex = (Exception) ex.getCause();
-        }
-        String retorno = ex.getMessage();
-        if(retorno.contains("foreign key")){
-            retorno = "Registro não pode ser excluído por possuir referência no sistema";
-        }
-
-        return retorno;
-    }
-
+public class MessagesUtil {
     public static void infoMessage(String title){
         FacesContext facesContext = FacesContext.getCurrentInstance();
         facesContext.getExternalContext().getFlash().setKeepMessages(true);

@@ -17,21 +17,21 @@ import jakarta.persistence.Table;
 @Table(name = "fabricante")
 public class Fabricante extends Empresa implements Serializable {
 
-    @Column(name = "contato")
+    @Column(name = "contato", length = 54)
     private String contato;
-    @Column(name = "contato_fone")
+    @Column(name = "contato_fone", length = 11)
     private String contatoFone;
-    @Column(name = "contato_ramal")
+    @Column(name = "contato_ramal", length = 8)
     private String contatoRamal;
-    @Column(name = "contato_email")
+    @Column(name = "contato_email", length = 32)
     private String contatoEmail;
-    @Column(name = "suporte_fone")
+    @Column(name = "suporte_fone", length = 11)
     private String suporteFone;
-    @Column(name = "suporte_email")
+    @Column(name = "suporte_email", length = 32)
     private String suporteEmail;
-    @Column(name = "sac_fone")
+    @Column(name = "sac_fone", length = 11)
     private String sacFone;
-    @Column(name = "sac_email")
+    @Column(name = "sac_email", length = 32)
     private String sacEmail;
 
     public Fabricante() {

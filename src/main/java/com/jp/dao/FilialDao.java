@@ -21,7 +21,7 @@ import java.util.List;
  */
 
 @Stateful
-public class FilialDao implements Serializable {
+public class FilialDao implements Serializable{
     private static final long serialVersionUID = 1L;
     @PersistenceContext(unitName = "gestaotiPU")
     private EntityManager em;

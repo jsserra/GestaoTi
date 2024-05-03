@@ -5,7 +5,7 @@
 package com.jp.dao;
 
 import com.jp.model.Fabricante;
-import jakarta.ejb.Stateless;
+import jakarta.ejb.Stateful;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
@@ -16,27 +16,69 @@ import java.util.List;
 
 /**
  *
- * @author julianos
+ * @author everson
  */
-@Stateless
+
+@Stateful
 public class FabricanteDao implements Serializable {
-
+    private static final long serialVersionUID = 1L;
     @PersistenceContext(unitName = "gestaotiPU")
-    EntityManager em;
-    
-    public List<Fabricante> getFabricantes(){
-       // Query q = em.createQuery("select h from FabricanteHeranca h");
-       // return q.getResultList();          
-        List<Fabricante> enderecos = new ArrayList<>();
-        Query q = em.createQuery("select e from Fabricante e");
-        
+    private EntityManager em;
+    private List<Fabricante> listaObjetos;
+
+    private String mensagem;
+
+    public EntityManager getEm() {
+        return em;
+    }
+
+    public void setEm(EntityManager em) {
+        this.em = em;
+    }
+
+    public List<Fabricante> getListaObjetos() {
+        String jpql = "from Fabricante";
+        return em.createQuery(jpql).getResultList();
+    }
+
+    public void setListaObjetos(List<Fabricante> listaObjetos) {
+        this.listaObjetos = listaObjetos;
+    }
+
+
+    public List<Fabricante> getAll() {
+        Query query = em.createQuery("from Fabricante f");
+
         try{
-        enderecos = q.getResultList();
-        }catch(Exception e){
-            System.out.println(e);
+            return query.getResultList();
         }
-        return enderecos;
-    } 
+        catch (Exception e){
+            System.out.println(e);
+            return new ArrayList<Fabricante>();
+        }
+    }
 
+    public Fabricante findById(Integer id) {
+        Fabricante obj = (Fabricante) em.find(Fabricante.class, id);
+        return obj;
+    }
 
+    public void persist(Fabricante object) throws Exception{
+        em.persist(object);
+        mensagem = "Salvo com sucesso!";
+    }
+
+    public void merge(Fabricante object) throws Exception{
+        em.merge(object);
+        mensagem = "Editado com sucesso!";
+    }
+
+    public void remove(Fabricante object) throws Exception{
+        object = em.merge(object);
+        em.remove(object);
+    }
+
+    public String getMensagem() {
+        return mensagem;
+    }
 }

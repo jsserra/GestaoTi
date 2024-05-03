@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<f:view>
+    <ui:composition template="../templates/principal.xhtml">
+        <ui:define name="pageTitle">Listagem de Fornecedores</ui:define>
+
+        <ui:define name="links">
+            <h:outputStylesheet library="css" name="empresas.css"/>
+            <h:outputStylesheet library="webjars" name="primeflex/3.3.1/primeflex.min.css" />
+        </ui:define>
+
+        <ui:define name="content">
+            <h1>Fornecedores</h1>
+            <div class="card crud-demo">
+                <h:form id="fornecedores-form">
+                    <p:growl id="messages" showDetail="true" />
+                    <p:toolbar>
+                        <p:toolbarGroup>
+                            <p:commandButton value="Incluir" icon="pi pi-plus" actionListener="#{fornecedorController.openNew}"
+                                             update=":dialogs:manage-fornecedor" oncomplete="PF('manageFornecedorDialog').show()"
+                                             styleClass="ui-button-success" style="margin-right: .5rem">
+                                <p:resetInput target=":dialogs:manage-fornecedor" />
+                            </p:commandButton>
+                            <p:commandButton id="delete-fornecedores-button" value="#{fornecedorController.deleteButtonMessage}"
+                                             icon="pi pi-trash" actionListener="#{fornecedorController.deleteSelectedFornecedores}"
+                                             styleClass="ui-button-danger" disabled="#{!fornecedorController.hasSelectedFornecedores()}" update="@this">
+                                <p:confirm header="Confirmation" message="Deseja realmente excluir a(s) fornecedores selecionada(s)?"
+                                           icon="pi pi-exclamation-triangle" />
+                            </p:commandButton>
+                        </p:toolbarGroup>
+                        <p:toolbarGroup align="right">
+                        </p:toolbarGroup>
+                    </p:toolbar>
+
+                    <p:dataTable id="dt-fornecedores" widgetVar="dtFornecedores" var="fornecedor" value="#{fornecedorController.fornecedores}"
+                                 reflow="true" styleClass="fornecedores-table" selection="#{fornecedorController.selectedFornecedores}"
+                                 rowKey="#{fornecedor.id}" paginator="true" rows="10" rowSelectMode="add" paginatorPosition="bottom">
+                        <f:facet name="header">
+                            <div class="fornecedores-table-header">
+                                <span style="font-weight: bold">EMPRESAS</span>
+                                <span class="filter-container ui-input-icon-left"> <i class="pi pi-search"></i>
+                                    <p:inputText id="globalFilter" onkeyup="PF('dtFornecedores').filter()" placeholder="Pesquisar" />
+                                </span>
+                            </div>
+                        </f:facet>
+
+                        <p:ajax event="rowSelect" update=":fornecedores-form:delete-fornecedores-button" />
+                        <p:ajax event="rowUnselect" update=":fornecedores-form:delete-fornecedores-button" />
+                        <p:ajax event="rowSelectCheckbox" update=":fornecedores-form:delete-fornecedores-button" />
+                        <p:ajax event="rowUnselectCheckbox" update=":fornecedores-form:delete-fornecedores-button" />
+                        <p:ajax event="toggleSelect" update=":fornecedores-form:delete-fornecedores-button" />
+
+                        <p:column selectionMode="multiple" exportable="false" styleClass="checkbox-table" width="5%"></p:column>
+
+                        <p:column headerText="ID" sortBy="#{fornecedor.id}" filterBy="#{fornecedor.id}" width="10%">
+                            <h:outputText value="#{fornecedor.id}" />
+                        </p:column>
+                        <p:column headerText="Nome" sortBy="#{fornecedor.nome}" filterBy="#{fornecedor.nome}" width="20%">
+                            <h:outputText value="#{fornecedor.nome}" style="font-weight: 700"/>
+                        </p:column>
+                        <p:column headerText="CNPJ" sortBy="#{fornecedor.cnpj}" filterBy="#{fornecedor.cnpj}" width="15%">
+                            <h:outputText value="#{fornecedor.cnpj}"/>
+                        </p:column>
+                        <p:column headerText="Razão Social" sortBy="#{fornecedor.razao}" filterBy="#{fornecedor.razao}" width="35%">
+                            <h:outputText value="#{fornecedor.razao}" />
+                        </p:column>
+                        <p:column exportable="false" width="15%" styleClass="commands-table">
+                            <p:commandButton icon="pi pi-search-plus" update=":dialogs:manage-fornecedor"
+                                             actionListener="#{fornecedorController.callViewDialog()}"
+                                             oncomplete="PF('manageFornecedorDialog').show()"
+                                             styleClass="action-button rounded-button ui-button-primary" process="@this">
+                                <f:setPropertyActionListener value="#{fornecedor}" target="#{fornecedorController.selectedFornecedor}" />
+                                <p:resetInput target=":dialogs:manage-fornecedor" />
+                            </p:commandButton>
+                            <p:commandButton icon="pi pi-pencil" update=":dialogs:manage-fornecedor"
+                                             actionListener="#{fornecedorController.callEditDialog()}"
+                                             oncomplete="PF('manageFornecedorDialog').show()"
+                                             styleClass="action-button rounded-button ui-button-success" process="@this">
+                                <f:setPropertyActionListener value="#{fornecedor}" target="#{fornecedorController.selectedFornecedor}" />
+                                <p:resetInput target=":dialogs:manage-fornecedor" />
+                            </p:commandButton>
+                            <p:commandButton styleClass="ui-button-warning rounded-button action-button" icon="pi pi-trash"
+                                             process="@this"
+                                             oncomplete="PF('deleteFornecedorDialog').show()">
+                                <f:setPropertyActionListener value="#{fornecedor}" target="#{fornecedorController.selectedFornecedor}" />
+                            </p:commandButton>
+                        </p:column>
+                    </p:dataTable>
+
+                    <p:contextMenu for="dt-fornecedores">
+                    </p:contextMenu>
+                </h:form>
+
+                <h:form id="dialogs">
+                    <p:dialog id="manage-fornecedor"  header="Detalhes da Fornecedor" showEffect="fade" modal="true" widgetVar="manageFornecedorDialog"
+                              responsive="true" blockScroll="true" maximizable="true" width="60%" fitViewport="true">
+                        <p:tabView dynamic="true" cache="false">
+                            <p:tab title="Identificação">
+                                <p:outputPanel rendered="#{not empty fornecedorController.selectedFornecedor}" deferred="true" class="ui-fluid formgrid grid">
+                                    <f:facet name="loading">
+                                        <p:skeleton width="100%"/>
+                                    </f:facet>
+                                    <div class="field grid col-12 md-6">
+                                        <h:outputText>Logotipo</h:outputText>
+                                        <p:fileUpload class="col-3" listener="#{fornecedorController.logoUpload}" id="uploadLogo"
+                                                      auto="true" mode="simple" skinSimple="true" allowTypes="/(\.|\/)(png|jpg|jpeg)$/" sizeLimit="10000000"
+                                                      invalidSizeMessage="O tamanho máximo para upload de um arquivo é de 10MB"
+                                                      invalidFileMessage="São aceitos apenas arquivos .jpeg / .jpg / .png"
+                                                      fileLimitMessage="Apenas um arquivo pode ser enviado por vez"
+                                                      disabled="#{fornecedorController.viewFormMode}" label="Inserir logo" update="logotipo-space logotipo" process="@this">
+                                        </p:fileUpload>
+                                    <p:outputPanel class="col-9" styleClass="text-center" id="logotipo-space" loaded="#{not empty fornecedorController.selectedFornecedor.logotipo}" deferred="true" deferredMode="load">
+                                        <p:graphicImage id="logotipo" value="#{fornecedorController.fornecedorLogo}" styleClass="fornecedor-logo" cache="false"/>
+                                        <p:commandButton ajax="true" value="Remover" icon="pi pi-times" actionListener="#{fornecedorController.removeLogo}" rendered="#{not empty fornecedorController.selectedFornecedor.logotipo}"
+                                                         styleClass="ui-button-secondary w-5" disabled="#{fornecedorController.viewFormMode}" update="logotipo-space" process="@this"/>
+                                    </p:outputPanel>
+                                    </div>
+                                    <div class="field col-4 md-6">
+                                        <p:outputLabel for="idFornecedor">ID</p:outputLabel>
+                                        <p:inputText id="idFornecedor" value="#{fornecedorController.selectedFornecedor.id}" required="false" readonly="true" disabled="true"/>
+                                    </div>
+                                    <div class="field col-8 md-6">
+                                        <p:outputLabel for="nome">Nome</p:outputLabel><br/>
+                                        <p:inputText id="nome" value="#{fornecedorController.selectedFornecedor.nome}" required="true" requiredMessage="Um nome deve ser informado" maxlength="45" size="45" disabled="#{fornecedorController.viewFormMode}"/>
+                                    </div>
+                                    <div class="field col-12 md-6">
+                                        <p:outputLabel for="razaoSocial">Razão Social</p:outputLabel><br/>
+                                        <p:inputText id="razaoSocial" value="#{fornecedorController.selectedFornecedor.razao}" required="true" requiredMessage="Uma razão deve ser informado" maxlength="45" size="45" disabled="#{fornecedorController.viewFormMode}" />
+                                    </div>
+                                    <div class="field col-6 md-6">
+                                        <p:outputLabel for="cnpj">CNPJ</p:outputLabel><br/>
+                                        <p:inputMask id="cnpj" value="#{fornecedorController.selectedFornecedor.cnpj}" mask="99.999.999/9999-99" disabled="#{fornecedorController.viewFormMode}"/>
+                                    </div>
+                                    <div class="field col-6 md-6">
+                                        <p:outputLabel for="ie">Inscrição Estadual</p:outputLabel><br/>
+                                        <p:inputMask id="ie" value="#{fornecedorController.selectedFornecedor.ie}" disabled="#{fornecedorController.viewFormMode}" mask="999/9999999"/>
+                                    </div>
+                                    <div class="field">
+                                        <p:outputLabel for="ativo">Ativo</p:outputLabel><br/>
+                                        <p:toggleSwitch id="ativo" value="#{fornecedorController.selectedFornecedor.ativo}" onIcon="pi pi-check" offIcon="pi pi-times" disabled="#{fornecedorController.viewFormMode}" />
+                                    </div>
+                                </p:outputPanel>
+                            </p:tab>
+
+                            <p:tab title="Contatos">
+                                <p:outputPanel rendered="#{not empty fornecedorController.selectedFornecedor}" class="ui-fluid formgrid grid">
+                                    <div class="field p-col col-7 md-6">
+                                        <p:outputLabel for="telefone">Telefone</p:outputLabel>
+                                        <p:inputMask id="telefone" value="#{fornecedorController.selectedFornecedor.telefone}" disabled="#{fornecedorController.viewFormMode}" mask="(99)9999-9999"/>
+                                    </div>
+                                    <div class="field col-7 md-6 col">
+                                        <p:outputLabel for="celular">Celular</p:outputLabel>
+                                        <p:inputMask id="celular" value="#{fornecedorController.selectedFornecedor.celular}" disabled="#{fornecedorController.viewFormMode}" mask="(99)99999-9999"/>
+                                    </div>
+                                    <div class="field col-7 md-6">
+                                        <p:outputLabel for="whatsapp">Whatsapp</p:outputLabel>
+                                        <p:inputMask id="whatsapp" value="#{fornecedorController.selectedFornecedor.whatsapp}" disabled="#{fornecedorController.viewFormMode}" mask="(99)99999-9999"/>
+                                    </div>
+                                    <div class="field col-7 md-6">
+                                        <p:outputLabel for="email">E-mail</p:outputLabel>
+                                        <p:inputText id="email" value="#{fornecedorController.selectedFornecedor.email}" maxlength="32" disabled="#{fornecedorController.viewFormMode}" />
+                                    </div>
+                                </p:outputPanel>
+                            </p:tab>
+
+                            <p:tab title="Acessos">
+                                <p:outputPanel rendered="#{not empty fornecedorController.selectedFornecedor}" class="ui-fluid formgrid grid">
+                                    <div class="field col-12 md-6">
+                                        <p:outputLabel for="site">Site</p:outputLabel>
+                                        <p:inputText id="site" value="#{fornecedorController.selectedFornecedor.site}" maxlength="54" disabled="#{fornecedorController.viewFormMode}" />
+                                    </div>
+                                    <div class="field col-7 md-6">
+                                        <p:outputLabel for="login">Login</p:outputLabel>
+                                        <p:inputText id="login" value="#{fornecedorController.selectedFornecedor.login}" maxlength="32" disabled="#{fornecedorController.viewFormMode}" />
+                                    </div>
+                                    <div class="field col-7 md-6">
+                                        <p:outputLabel for="senha">Senha</p:outputLabel>
+                                        <p:inputText id="senha" value="#{fornecedorController.selectedFornecedor.senha}" maxlength="24" disabled="#{fornecedorController.viewFormMode}"/>
+                                    </div>
+                                    <div class="field col-12 md-6">
+                                        <p:outputLabel for="codigoCliente">Código Cliente</p:outputLabel>
+                                        <p:inputText id="codigoCliente" value="#{fornecedorController.selectedFornecedor.codigoCliente}" maxlength="24" disabled="#{fornecedorController.viewFormMode}"/>
+                                    </div>
+                                </p:outputPanel>
+                            </p:tab>
+                            <p:tab title="Endereço">
+                                <p:outputPanel rendered="#{not empty fornecedorController.selectedFornecedor}" class="ui-fluid formgrid grid">
+                                    <div class="field col-6 md-6">
+                                        <p:outputLabel for="logradouro">Logradouro</p:outputLabel>
+                                        <p:inputText id="logradouro" value="#{fornecedorController.selectedFornecedor.endereco.logradouro}" disabled="#{fornecedorController.viewFormMode}"/>
+                                    </div>
+                                    <div class="field col-6 md-6">
+                                        <p:outputLabel for="nomeEndereco">Nome</p:outputLabel>
+                                        <p:inputText id="nomeEndereco" value="#{fornecedorController.selectedFornecedor.endereco.nome}" maxlength="45" disabled="#{fornecedorController.viewFormMode}"/>
+                                    </div>
+                                    <div class="field col-4 md-6">
+                                        <p:outputLabel for="numero">Número</p:outputLabel>
+                                        <p:inputText id="numero" value="#{fornecedorController.selectedFornecedor.endereco.numero}" class="form-field" disabled="#{fornecedorController.viewFormMode}"/>
+                                    </div>
+                                    <div class="field col-12 md-6">
+                                        <p:outputLabel for="complemento">Complemento</p:outputLabel>
+                                        <p:inputText id="complemento" value="#{fornecedorController.selectedFornecedor.endereco.complemento}" maxlength="100" disabled="#{fornecedorController.viewFormMode}"/>
+                                    </div>
+                                    <div class="field col-6 md-6">
+                                        <p:outputLabel for="bairro">Bairro</p:outputLabel>
+                                        <p:inputText id="bairro" value="#{fornecedorController.selectedFornecedor.endereco.bairro}" maxlength="45" disabled="#{fornecedorController.viewFormMode}"/>
+                                    </div>
+                                    <div class="field col-6 md-6">
+                                        <p:outputLabel for="cidade">Cidade</p:outputLabel>
+                                        <p:inputText id="cidade" value="#{fornecedorController.selectedFornecedor.endereco.cidade}" maxlength="45" disabled="#{fornecedorController.viewFormMode}"/>
+                                    </div>
+                                    <div class="field col-6 md-6">
+                                        <p:outputLabel for="estado">Estado</p:outputLabel>
+                                        <p:inputText id="estado" value="#{fornecedorController.selectedFornecedor.endereco.estado}" disabled="#{fornecedorController.viewFormMode}"/>
+                                    </div>
+                                    <div class="field col-6 md-6">
+                                        <p:outputLabel for="CEP">CEP</p:outputLabel>
+                                        <p:inputMask id="CEP" value="#{fornecedorController.selectedFornecedor.endereco.cep}" mask="99999-999" disabled="#{fornecedorController.viewFormMode}"/>
+                                    </div>
+                                    <div class="field col-12 md-6">
+                                        <p:outputLabel for="pontoReferencia">Ponto de Referência</p:outputLabel>
+                                        <p:inputTextarea id="pontoReferencia" value="#{fornecedorController.selectedFornecedor.endereco.pontoReferencia}" disabled="#{fornecedorController.viewFormMode}"/>
+                                    </div>
+                                    <div class="field col-12 md-6">
+                                        <p:outputLabel for="info">Informações sobre o endereço</p:outputLabel>
+                                        <p:inputTextarea id="info" value="#{fornecedorController.selectedFornecedor.endereco.info}" disabled="#{fornecedorController.viewFormMode}" />
+                                    </div>
+                            </p:outputPanel>
+                            </p:tab>
+                            <p:tab title="Extras">
+                                <p:outputPanel rendered="#{not empty fornecedorController.selectedFornecedor}" class="ui-fluid formgrid grid">
+                                    <div class="field col-12 md-6">
+                                        <p:outputLabel for="infoFornecedor">Mais informações</p:outputLabel>
+                                        <p:inputTextarea id="infoFornecedor" value="#{fornecedorController.selectedFornecedor.info}" disabled="#{fornecedorController.viewFormMode}" />
+                                    </div>
+                                </p:outputPanel>
+                            </p:tab>
+                        </p:tabView>
+                        <f:facet name="footer" id="footer-manage-fornecedor" rendered="#{fornecedorController.viewFormMode}">
+                            <p:commandButton value="Salvar" icon="pi pi-check" actionListener="#{fornecedorController.saveFornecedor}"
+                                             update="manage-fornecedor :fornecedores-form:dt-fornecedores" process="manage-fornecedor @this" rendered="#{!fornecedorController.viewFormMode}"  />
+                            <p:commandButton value="Cancelar" icon="pi pi-times" onclick="PF('manageFornecedorDialog').hide()"
+                                             class="ui-button-secondary" type="button" />
+                        </f:facet>
+                    </p:dialog>
+
+                    <p:confirmDialog widgetVar="deleteFornecedorDialog" showEffect="fade" width="300"
+                                     message="Deseja realmente deletar a fornecedor?" header="Confirm" severity="warn">
+                        <p:commandButton value="Sim" icon="pi pi-check" actionListener="#{fornecedorController.deleteFornecedor}"
+                                         process="@this" update=":fornecedores-form:delete-fornecedores-button"
+                                         oncomplete="PF('deleteFornecedorDialog').hide()" />
+                        <p:commandButton value="Não" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                         onclick="PF('deleteFornecedorDialog').hide()" />
+                    </p:confirmDialog>
+
+                    <p:confirmDialog global="true" showEffect="fade" width="300">
+                        <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+                        <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no ui-button-secondary"
+                                         icon="pi pi-times" />
+                    </p:confirmDialog>
+                </h:form>
+            </div>
+        </ui:define>
+        <ui:define name="footer"></ui:define>
+    </ui:composition>
+</f:view>
+</html>

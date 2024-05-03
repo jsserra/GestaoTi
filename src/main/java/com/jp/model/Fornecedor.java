@@ -18,13 +18,7 @@ import jakarta.persistence.Table;
  */
 @Entity
 @Table(name = "fornecedor")
-public class Fornecedor implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Integer id;
+public class Fornecedor extends Empresa implements Serializable {
 
     @Column(name = "nome")
     private String nome;
@@ -44,13 +38,13 @@ public class Fornecedor implements Serializable {
     private String foneSac;
     @Column(name = "whatsapp")
     private String whatsapp;
-    @Column(name = "representante")
+    @Column(name = "representante", length = 32)
     private String representante;
-    @Column(name = "representante_fone")
+    @Column(name = "representante_fone", length = 11)
     private String representanteFone;
-    @Column(name = "representante_ramal")
+    @Column(name = "representante_ramal", length = 8)
     private String representanteRamal;
-    @Column(name = "representante_email")
+    @Column(name = "representante_email", length = 32)
     private String representanteEmail;
     @Column(name = "site")
     private String site;
@@ -64,10 +58,14 @@ public class Fornecedor implements Serializable {
     private String senha;
     @Column(name = "info")
     private String info;
+    @Column(name = "venda_email", length = 32)
+    private String vendaEmail;
+    @Column(name = "venda_fone", length = 11)
+    private String vendaFone;
     @Column(name = "fornece")
     private Boolean fornece;
     @Column(name = "ativo")
-    private Boolean ativo;
+    private Boolean ativo = true;
 
     public Fornecedor() {
     }
@@ -249,6 +247,22 @@ public class Fornecedor implements Serializable {
 
     public void setAtivo(Boolean ativo) {
         this.ativo = ativo;
+    }
+
+    public String getVendaEmail() {
+        return vendaEmail;
+    }
+
+    public void setVendaEmail(String vendaEmail) {
+        this.vendaEmail = vendaEmail;
+    }
+
+    public String getVendaFone() {
+        return vendaFone;
+    }
+
+    public void setVendaFone(String vendaFone) {
+        this.vendaFone = vendaFone;
     }
 
     @Override

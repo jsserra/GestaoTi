@@ -6,7 +6,6 @@ package com.jp.controller;
 
 import com.jp.dao.FilialDao;
 import com.jp.model.Filial;
-import com.jp.service.BytesConverter;
 import com.jp.view.util.ExceptionsUtil;
 import com.jp.view.util.MessagesUtil;
 import jakarta.ejb.EJB;
@@ -90,9 +89,9 @@ public class FilialController implements Serializable {
             daoFilial.remove(this.selectedEmpresa);
             this.selectedEmpresa = null;
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Empresa Excluída"));
-            PrimeFaces.current().ajax().update("empresas-form:messages", "empresas-form:dt-products");
+            PrimeFaces.current().ajax().update("empresas-form:messages", "empresas-form:dt-empresas");
         }catch (Exception e) {
-            System.out.println(e);
+            MessagesUtil.errorMessage("Erro ao gravar", ExceptionsUtil.getExceptionMessage(e));
         }
     }
 
@@ -101,7 +100,6 @@ public class FilialController implements Serializable {
             int size = this.selectedEmpresas.size();
             return size > 1 ? size + " empresas selecionadas " : "1 empresa selecionada";
         }
-
         return "Excluir";
     }
 
@@ -116,10 +114,10 @@ public class FilialController implements Serializable {
             }
             this.selectedEmpresas = null;
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Empresas Excluídas"));
-            PrimeFaces.current().ajax().update("empresas-form:messages", "empresas-form:dt-products");
+            PrimeFaces.current().ajax().update("empresas-form:messages", "empresas-form:dt-empresas");
             PrimeFaces.current().executeScript("PF('dtEmpresas').clearFilters()");
         }catch (Exception e){
-            System.out.println(e);
+            MessagesUtil.errorMessage("Erro ao gravar", ExceptionsUtil.getExceptionMessage(e));
         }
     }
 

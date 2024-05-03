@@ -1,13 +1,13 @@
 package com.jp.dao;
 
+import java.io.Serializable;
 import java.util.List;
 
-public interface GenericDao<T>{
+public interface GenericDao<T> extends Serializable {
     public List<T> getAll();
     public T findById(Integer id);
-    public boolean persist(T object);
-    public boolean merge(T object);
-    public void rollback();
-    public boolean remove(T object);
+    public void persist(T object) throws Exception;
+    public void merge(T object) throws Exception;
+    public void remove(T object) throws Exception;
 
 }

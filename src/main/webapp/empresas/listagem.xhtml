@@ -30,7 +30,7 @@
                             <p:commandButton id="delete-empresas-button" value="#{filialController.deleteButtonMessage}"
                                              icon="pi pi-trash" actionListener="#{filialController.deleteSelectedEmpresas}"
                                              styleClass="ui-button-danger" disabled="#{!filialController.hasSelectedEmpresas()}" update="@this">
-                                <p:confirm header="Confirmation" message="Dseja realmente excluir a(s) empresas selecionada(s)?"
+                                <p:confirm header="Confirmation" message="Deseja realmente excluir a(s) empresas selecionada(s)?"
                                            icon="pi pi-exclamation-triangle" />
                             </p:commandButton>
                         </p:toolbarGroup>
@@ -135,11 +135,11 @@
                                     </div>
                                     <div class="field col-6 md-6">
                                         <p:outputLabel for="cnpj">CNPJ</p:outputLabel><br/>
-                                        <p:inputText id="cnpj" value="#{filialController.selectedEmpresa.cnpj}" maxlength="14" disabled="#{filialController.viewFormMode}" />
+                                        <p:inputMask id="cnpj" value="#{filialController.selectedEmpresa.cnpj}" mask="99.999.999/9999-99" disabled="#{filialController.viewFormMode}"/>
                                     </div>
                                     <div class="field col-6 md-6">
                                         <p:outputLabel for="ie">Inscrição Estadual</p:outputLabel><br/>
-                                        <p:inputText id="ie" value="#{filialController.selectedEmpresa.ie}" maxlength="10" disabled="#{filialController.viewFormMode}" />
+                                        <p:inputMask id="ie" value="#{filialController.selectedEmpresa.ie}" disabled="#{filialController.viewFormMode}" mask="999/9999999"/>
                                     </div>
                                     <div class="field">
                                         <p:outputLabel for="ativo">Ativo</p:outputLabel><br/>
@@ -152,15 +152,15 @@
                                 <p:outputPanel rendered="#{not empty filialController.selectedEmpresa}" class="ui-fluid formgrid grid">
                                     <div class="field p-col col-7 md-6">
                                         <p:outputLabel for="telefone">Telefone</p:outputLabel>
-                                        <p:inputText id="telefone" value="#{filialController.selectedEmpresa.telefone}" maxlength="11" disabled="#{filialController.viewFormMode}" />
+                                        <p:inputMask id="telefone" value="#{filialController.selectedEmpresa.telefone}" disabled="#{filialController.viewFormMode}" mask="(99)9999-9999"/>
                                     </div>
                                     <div class="field col-7 md-6 col">
                                         <p:outputLabel for="celular">Celular</p:outputLabel>
-                                        <p:inputText id="celular" value="#{filialController.selectedEmpresa.celular}" maxlength="11" disabled="#{filialController.viewFormMode}" />
+                                        <p:inputMask id="celular" value="#{filialController.selectedEmpresa.celular}" disabled="#{filialController.viewFormMode}" mask="(99)99999-9999"/>
                                     </div>
                                     <div class="field col-7 md-6">
                                         <p:outputLabel for="whatsapp">Whatsapp</p:outputLabel>
-                                        <p:inputText id="whatsapp" value="#{filialController.selectedEmpresa.whatsapp}" maxlength="11" disabled="#{filialController.viewFormMode}" />
+                                        <p:inputMask id="whatsapp" value="#{filialController.selectedEmpresa.whatsapp}" disabled="#{filialController.viewFormMode}" mask="(99)99999-9999"/>
                                     </div>
                                     <div class="field col-7 md-6">
                                         <p:outputLabel for="email">E-mail</p:outputLabel>
@@ -221,7 +221,7 @@
                                     </div>
                                     <div class="field col-6 md-6">
                                         <p:outputLabel for="CEP">CEP</p:outputLabel>
-                                        <p:inputText id="CEP" value="#{filialController.selectedEmpresa.endereco.cep}" maxlength="8" disabled="#{filialController.viewFormMode}"/>
+                                        <p:inputMask id="CEP" value="#{filialController.selectedEmpresa.endereco.cep}" mask="99999-999" disabled="#{filialController.viewFormMode}"/>
                                     </div>
                                     <div class="field col-12 md-6">
                                         <p:outputLabel for="pontoReferencia">Ponto de Referência</p:outputLabel>
@@ -267,9 +267,7 @@
                 </h:form>
             </div>
         </ui:define>
-        <ui:define name="footer">
-            <h:outputScript library="javascript" name="empresas.js"></h:outputScript>
-        </ui:define>
+        <ui:define name="footer"></ui:define>
     </ui:composition>
 </f:view>
 </html>

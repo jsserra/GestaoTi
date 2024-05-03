@@ -1,0 +1,19 @@
+.colabordores-table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.colaboradores-table{
+    margin: 0.7em 0.6em;
+}
+
+.colaboradores-table .checkbox-table{
+    text-align: center;
+    text-align: -webkit-center;
+    text-align: -moz-center;
+}
+
+.colaboradores-table .commands-table .action-button:nth-child(n){
+    margin-right: 5px;
+}

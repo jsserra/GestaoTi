@@ -20,13 +20,13 @@
                 </div>
                 <h:form>
                     <p:menubar styleClass="downbar bg-darkblue">
-                        <p:menuitem icon="pi pi-fw pi-home" styleClass="text-white" label="Início" value="Início" action="/index"/>-->
+                        <p:menuitem icon="pi pi-fw pi-home" styleClass="text-white" label="Início" value="Início" url="#{facesContext.externalContext.requestContextPath}/index.xhtml"/>-->
                         <p:submenu icon="pi pi-fw pi-file-edit" label="Cadastros">
                             <p:menuitem value="Empresa" action="#{filialController.acessar()}"/>
-                            <p:menuitem value="Colaboradores"/>
+                            <p:menuitem value="Colaboradores" action="#{colaboradorController.acessar()}"/>
                             <p:menuitem value="Usuários"/>
-                            <p:menuitem value="Fabricante"/>
-                            <p:menuitem value="Fornecedor"/>
+                            <p:menuitem value="Fabricante" action="#{fabricanteController.acessar()}"/>
+                            <p:menuitem value="Fornecedor" action="#{fornecedorController.acessar()}"/>
                         </p:submenu>
                         <p:submenu icon="pi pi-wallet" label="Compras">
                             <p:menuitem value="Solicitar Compra"/>

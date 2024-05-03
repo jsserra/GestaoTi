@@ -14,17 +14,23 @@ public class Colaborador implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id")
-    public Integer id;
+    private Integer id;
     @NotNull
     @NotBlank
-    @Column(name = "nome")
-    public String nome;
-    @Column(name = "sobrenome")
-    public String sobrenome;
-    @Column(name = "setor")
-    public Setor setor;
+    @Column(name = "nome", length = 20)
+    private String nome;
+    @Column(name = "sobrenome", length = 40)
+    private String sobrenome;
+    @ManyToOne
+    @JoinColumn(name = "setor", referencedColumnName = "id", nullable = false)
+    private Setor setor;
     @Column(name = "atribuicao")
-    public String atribuicao;
+    private String atribuicao;
+    @Column(name = "ativo")
+    private Boolean ativo = true;
+    public Integer getId() {
+        return id;
+    }
 
     public String getNome() {
         return nome;
@@ -56,6 +62,14 @@ public class Colaborador implements Serializable{
 
     public void setAtribuicao(String atribuicao) {
         this.atribuicao = atribuicao;
+    }
+
+    public Boolean getAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(Boolean ativo) {
+        this.ativo = ativo;
     }
 
     @Override

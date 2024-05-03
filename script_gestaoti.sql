@@ -67,13 +67,15 @@ CREATE TABLE empresa (
     senha varchar(24),
     codigo_cliente varchar(24),
     tipo_empresa enum('Filial','Fabricante','Fornecedor'),
-    logotipo blob,
+    logotipo mediumblob,
     info text,
     ativo boolean default true,
     id_end int unique,
     primary key(id),
     foreign key(id_end) references endereco(id)
     );    
+    
+    alter table empresa modify logotipo mediumblob;
    
 /* Inserts Empresa tipo Filial */
 insert into  empresa (cnpj, ie, razao, nome, telefone, tipo_empresa, id_end)
@@ -497,15 +499,49 @@ create table inativo (
 
 /* --- USUARIO --- */
 
+/* --- SETOR --- */
+create table setor(
+	id int unsigned not null auto_increment,
+    nome varchar(30) not null unique,
+    sigla varchar(5),
+    gestor int,
+    primary key(id),
+    foreign key(responsavel) references colaborador (id)
+);
+
+
+
+insert into SETOR (nome, sigla) values
+( 'Tecnologia da Informação', 'TI'),
+('Recursos Humanos', 'RH'),
+('Compras e Pedidos', 'PED'),
+('Contabilidade', 'CNT'),
+('Diretoria', 'DIR'),
+('Contas a Pagar', 'CPG'),
+('Tesouraria', 'TES'),
+('Controladoria', 'CTRL'),
+('Avaria', 'AVA'),
+('Frente de Loja', 'FL'),
+('Website Compras Online', 'WEB'),
+('Estoque', 'EST'),
+('Gerência', 'GER'),
+('Circuito Fechado de Televisão', 'CFTV');
+
 /* --- COLABORADOR --- */
 create table colaborador(
 	id int auto_increment not null,
     nome varchar(20) not null,
     sobrenome varchar(40),
-    setor enum('Ti', 'Web'),
+    setor int not null,
     atribuicao varchar(255),
-    primary key (id)
+    ativo boolean default true,
+    primary key (id),
+    foreign key(setor) references setor(id)
 );
+
+alter table setor
+	add constraint 
+	foreign key (responsavel) references colaborador (id);
 
 /* --- SERVICO --- * Atribuição das atividades /
 

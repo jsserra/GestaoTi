@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<f:view>
+    <ui:composition template="../templates/principal.xhtml">
+    <ui:define name="pageTitle">Listagem de Colaboradores</ui:define>
+
+    <ui:define name="links">
+        <h:outputStylesheet library="css" name="colaboradores.css"/>
+        <h:outputStylesheet library="webjars" name="primeflex/3.3.1/primeflex.min.css" />
+    </ui:define>
+
+    <ui:define name="content">
+        <h1>Colaboradores</h1>
+        <div class="card crud-demo">
+            <h:form id="colaboradores-form">
+                <p:growl id="messages" showDetail="true" />
+                <p:toolbar>
+                    <p:toolbarGroup>
+                        <p:commandButton value="Incluir" icon="pi pi-plus" actionListener="#{colaboradorController.openNew}"
+                                         update=":dialogs:manage-colaborador" oncomplete="PF('manageColaboradorDialog').show()"
+                                         styleClass="ui-button-success" style="margin-right: .5rem">
+                            <p:resetInput target=":dialogs:manage-colaborador" />
+                        </p:commandButton>
+                        <p:commandButton id="delete-colaboradores-button" value="#{colaboradorController.deleteButtonMessage}"
+                                         icon="pi pi-trash" actionListener="#{colaboradorController.deleteSelectedColaboradores}"
+                                         styleClass="ui-button-danger" disabled="#{!colaboradorController.hasSelectedColaboradores()}" update="@this">
+                            <p:confirm header="Confirmation" message="Deseja realmente excluir o(s) colaboradores selecionado(s)?"
+                                       icon="pi pi-exclamation-triangle" />
+                        </p:commandButton>
+                    </p:toolbarGroup>
+                    <p:toolbarGroup align="right">
+                    </p:toolbarGroup>
+                </p:toolbar>
+
+                <p:dataTable id="dt-colaboradores" widgetVar="dtColaboradores" var="colaborador" value="#{colaboradorController.colaboradores}"
+                             reflow="true" styleClass="colaboradores-table" selection="#{colaboradorController.selectedColaboradores}"
+                             rowKey="#{colaborador.id}" paginator="true" rows="10" rowSelectMode="add" paginatorPosition="bottom">
+                    <f:facet name="header">
+                        <div class="colaboradores-table-header">
+                            <span style="font-weight: bold">COLABORADORES</span>
+                            <span class="filter-container ui-input-icon-left"> <i class="pi pi-search"></i>
+                                    <p:inputText id="globalFilter" onkeyup="PF('dtColaboradores').filter()" placeholder="Pesquisar" />
+                            </span>
+                        </div>
+                    </f:facet>
+
+                    <p:ajax event="rowSelect" update=":colaboradores-form:delete-colaboradores-button" />
+                    <p:ajax event="rowUnselect" update=":colaboradores-form:delete-colaboradores-button" />
+                    <p:ajax event="rowSelectCheckbox" update=":colaboradores-form:delete-colaboradores-button" />
+                    <p:ajax event="rowUnselectCheckbox" update=":colaboradores-form:delete-colaboradores-button" />
+                    <p:ajax event="toggleSelect" update=":colaboradores-form:delete-colaboradores-button" />
+
+                    <p:column selectionMode="multiple" exportable="false" styleClass="checkbox-table" width="5%"></p:column>
+
+                    <p:column headerText="ID" sortBy="#{colaborador.id}" filterBy="#{colaborador.id}" width="10%">
+                        <h:outputText value="#{colaborador.id}" />
+                    </p:column>
+                    <p:column headerText="Nome" sortBy="#{colaborador.nome}" filterBy="#{colaborador.nome}" width="15%">
+                        <h:outputText value="#{colaborador.nome}"/>
+                    </p:column>
+                    <p:column headerText="Sobrenome" sortBy="#{colaborador.sobrenome}" filterBy="#{colaborador.sobrenome}" width="25%">
+                        <h:outputText value="#{colaborador.sobrenome}"/>
+                    </p:column>
+                    <p:column headerText="Setor" sortBy="#{colaborador.setor.nome}" filterBy="#{colaborador.setor.nome}" width="20%">
+                        <h:outputText value="#{colaborador.setor.nome}" />
+                    </p:column>
+                    <p:column headerText="Sigla Setor" sortBy="#{colaborador.setor.sigla}" filterBy="#{colaborador.setor.sigla}" width="10%">
+                        <h:outputText value="#{colaborador.setor.sigla}" />
+                    </p:column>
+                    <p:column exportable="false" width="15%" styleClass="commands-table">
+                        <p:commandButton icon="pi pi-search-plus" update=":dialogs:manage-colaborador"
+                                         actionListener="#{colaboradorController.callViewDialog()}"
+                                         oncomplete="PF('manageColaboradorDialog').show()"
+                                         styleClass="action-button rounded-button ui-button-primary" process="@this">
+                            <f:setPropertyActionListener value="#{colaborador}" target="#{colaboradorController.selectedColaborador}" />
+                            <p:resetInput target=":dialogs:manage-colaborador" />
+                        </p:commandButton>
+                        <p:commandButton icon="pi pi-pencil" update=":dialogs:manage-colaborador"
+                                         actionListener="#{colaboradorController.callEditDialog()}"
+                                         oncomplete="PF('manageColaboradorDialog').show()"
+                                         styleClass="action-button rounded-button ui-button-success" process="@this">
+                            <f:setPropertyActionListener value="#{colaborador}" target="#{colaboradorController.selectedColaborador}" />
+                            <p:resetInput target=":dialogs:manage-colaborador" />
+                        </p:commandButton>
+                        <p:commandButton styleClass="ui-button-warning rounded-button action-button" icon="pi pi-trash"
+                                         process="@this"
+                                         oncomplete="PF('deleteColaboradorDialog').show()">
+                            <f:setPropertyActionListener value="#{colaborador}" target="#{colaboradorController.selectedColaborador}" />
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
+
+                <p:contextMenu for="dt-colaboradores">
+                    <p:menuitem value="Deletar" update="dt-colaboradores" icon="pi pi-times"
+                                action="#{colaboradorController.deleteColaborador}"/>
+                </p:contextMenu>
+            </h:form>
+
+            <h:form id="dialogs">
+                <p:dialog id="manage-colaborador"  header="Detalhes do Colaborador" showEffect="fade" modal="true" widgetVar="manageColaboradorDialog"
+                          responsive="true" blockScroll="true" maximizable="true" width="60%" fitViewport="true">
+                    <p:tabView dynamic="true" cache="false">
+                        <p:tab title="Identificação">
+                            <p:outputPanel rendered="#{not empty colaboradorController.selectedColaborador}" deferred="true" class="ui-fluid formgrid grid">
+                                <f:facet name="loading">
+                                    <p:skeleton width="100%"/>
+                                </f:facet>
+                                <div class="field col-12 md-6">
+                                    <p:outputLabel for="idColaborador">ID</p:outputLabel><br/>
+                                    <p:inputText id="idColaborador" value="#{colaboradorController.selectedColaborador.id}" size="10" required="false" readonly="true" disabled="true"/>
+                                </div>
+                                <div class="field col-5 md-6">
+                                    <p:outputLabel for="nome">Nome</p:outputLabel><br/>
+                                    <p:inputText id="nome" value="#{colaboradorController.selectedColaborador.nome}" required="true" requiredMessage="Um nome deve ser informado" maxlength="20" size="20" disabled="#{colaboradorController.viewFormMode}"/>
+                                </div>
+                                <div class="field col-7 md-6">
+                                    <p:outputLabel for="sobrenome">Sobrenome</p:outputLabel><br/>
+                                    <p:inputText id="sobrenome" value="#{colaboradorController.selectedColaborador.sobrenome}" required="false" maxlength="40" size="40" disabled="#{colaboradorController.viewFormMode}" />
+                                </div>
+                                <div class="field col-6 md-6">
+                                    <p:outputLabel for="setor-nome">Setor</p:outputLabel><br/>
+                                    <p:selectOneMenu id="setor-nome" value="#{colaboradorController.selectedColaborador.setor}"
+                                                     hideNoSelectionOption="#{not empty colaboradorController.selectedColaborador.setor}" required="true"
+                                                     requiredMessage="Um setor deve ser selecionado" disabled="#{colaboradorController.viewFormMode}">
+                                        <p:ajax update="@this setor-sigla" process="@this"/>
+                                        <f:selectItem itemLabel="Selecione um registro" itemValue="#{null}" noSelectionOption="true"/>
+                                        <f:converter binding="#{setorConverter}"/>
+                                        <f:selectItems value="#{colaboradorController.daoSetor.all}" var="setor" itemLabel="#{setor.nome}"/>
+                                    </p:selectOneMenu>
+                                </div>
+                                <div class="field col-6 md-6">
+                                    <p:outputLabel for="setor-sigla">Sigla</p:outputLabel><br/>
+                                    <p:inputText id="setor-sigla" value="#{colaboradorController.selectedColaborador.setor.sigla}" maxlength="10" disabled="true" />
+                                </div>
+                                <div class="field col-12 md-6" >
+                                    <p:outputLabel for="setor-gestor" rendered="#{not empty colaboradorController.selectedColaborador.setor}">Gestor</p:outputLabel><br/>
+                                    <p:inputText id="setor-gestor" rendered="#{not empty colaboradorController.selectedColaborador.setor}" disabled="true"
+                                                 value="#{colaboradorController.selectedColaborador.setor.gestor.nome} #{colaboradorController.selectedColaborador.setor.gestor.sobrenome}"/>
+                                </div>
+                                <div class="field col-12 md-6">
+                                    <p:outputLabel for="atribuicao">Atribuição</p:outputLabel><br/>
+                                    <p:inputTextarea id="atribuicao" value="#{colaboradorController.selectedColaborador.atribuicao}" disabled="#{colaboradorController.viewFormMode}" />
+                                </div>
+                            </p:outputPanel>
+                        </p:tab>
+                    </p:tabView>
+                    <f:facet name="footer" id="footer-manage-colaborador" rendered="#{colaboradorController.viewFormMode}">
+                        <p:commandButton value="Salvar" icon="pi pi-check" actionListener="#{colaboradorController.saveColaborador}"
+                                         update="manage-colaborador :colaboradores-form:dt-colaboradores" process="manage-colaborador @this" rendered="#{!colaboradorController.viewFormMode}"  />
+                        <p:commandButton value="Cancelar" icon="pi pi-times" onclick="PF('manageColaboradorDialog').hide()"
+                                         class="ui-button-secondary" type="button" />
+                    </f:facet>
+                </p:dialog>
+
+                <p:confirmDialog widgetVar="deleteColaboradorDialog" showEffect="fade" width="300"
+                                 message="Deseja realmente deletar o colaborador?" header="Confirm" severity="warn">
+                    <p:commandButton value="Sim" icon="pi pi-check" actionListener="#{colaboradorController.deleteColaborador}"
+                                     process="@this" update=":colaboradores-form:delete-colaboradores-button"
+                                     oncomplete="PF('deleteColaboradorDialog').hide()" />
+                    <p:commandButton value="Não" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                     onclick="PF('deleteColaboradorDialog').hide()" />
+                </p:confirmDialog>
+
+                <p:confirmDialog global="true" showEffect="fade" width="300">
+                    <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+                    <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no ui-button-secondary"
+                                     icon="pi pi-times" />
+                </p:confirmDialog>
+            </h:form>
+        </div>
+    </ui:define>
+        <ui:define name="footer"></ui:define>
+    </ui:composition>
+</f:view>
+</html>

@@ -156,6 +156,8 @@ create table fabricante (
     foreign key (id) references empresa(id)
 );
 
+insert into fabricante (id)
+	values(3);
 
 /* alter table fabricante_heranca add foreign key (id) references empresa (id); */
 
@@ -183,6 +185,8 @@ insert into filial
 
 insert into empresa (nome, razao, cnpj, ie, telefone, site, login, senha, codigo_cliente, tipo_empresa, id_end )
 values ('DeLL', 'DeLL Computadores do Brasil Ltda', '72381189001001', '748241245113', '08009703384', 'www.dell.com.br', 'jpavani-informatica@uol.com.br', 'avani11Jp','101762319','Fabricante', 4 );
+
+insert into fabricante(id) values(4);
 
 /* ---- CATEGORIA ---- */
 create table categoria(

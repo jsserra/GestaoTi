@@ -79,7 +79,7 @@ public class FabricanteController implements Serializable {
             }
 
             PrimeFaces.current().executeScript("PF('manageFabricanteDialog').hide()");
-            PrimeFaces.current().ajax().update("fabricantes-form:messages", "fabricantes-form:dt-products");
+            PrimeFaces.current().ajax().update("fabricantes-form:messages", "fabricantes-form:dt-fabricantes");
         }catch(Exception e){
             MessagesUtil.errorMessage("Erro ao gravar", ExceptionsUtil.getExceptionMessage(e));
         }

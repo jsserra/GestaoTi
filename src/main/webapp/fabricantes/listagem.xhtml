@@ -11,7 +11,7 @@
         <ui:define name="pageTitle">Listagem de Fabricantes</ui:define>
 
         <ui:define name="links">
-            <h:outputStylesheet library="css" name="empresas.css"/>
+            <h:outputStylesheet library="css" name="fabricantes.css"/>
             <h:outputStylesheet library="webjars" name="primeflex/3.3.1/primeflex.min.css" />
         </ui:define>
 
@@ -43,7 +43,7 @@
                                  rowKey="#{empresa.id}" paginator="true" rows="10" rowSelectMode="add" paginatorPosition="bottom">
                         <f:facet name="header">
                             <div class="fabricantes-table-header">
-                                <span style="font-weight: bold">EMPRESAS</span>
+                                <span style="font-weight: bold">FABRICANTES</span>
                                 <span class="filter-container ui-input-icon-left"> <i class="pi pi-search"></i>
                                     <p:inputText id="globalFilter" onkeyup="PF('dtFabricantes').filter()" placeholder="Pesquisar" />
                                 </span>
@@ -116,7 +116,7 @@
                                                       disabled="#{fabricanteController.viewFormMode}" label="Inserir logo" update="logotipo-space logotipo" process="@this">
                                         </p:fileUpload>
                                     <p:outputPanel class="col-9" styleClass="text-center" id="logotipo-space" loaded="#{not empty fabricanteController.selectedFabricante.logotipo}" deferred="true" deferredMode="load">
-                                        <p:graphicImage id="logotipo" value="#{fabricanteController.empresaLogo}" styleClass="empresa-logo" cache="false"/>
+                                        <p:graphicImage id="logotipo" value="#{fabricanteController.fabricanteLogo}" styleClass="empresa-logo" cache="false"/>
                                         <p:commandButton ajax="true" value="Remover" icon="pi pi-times" actionListener="#{fabricanteController.removeLogo}" rendered="#{not empty fabricanteController.selectedFabricante.logotipo}"
                                                          styleClass="ui-button-secondary w-5" disabled="#{fabricanteController.viewFormMode}" update="logotipo-space" process="@this"/>
                                     </p:outputPanel>
@@ -135,11 +135,11 @@
                                     </div>
                                     <div class="field col-6 md-6">
                                         <p:outputLabel for="cnpj">CNPJ</p:outputLabel><br/>
-                                        <p:inputMask id="cnpj" value="#{fabricanteController.selectedFabricante.cnpj}" mask="99.999.999/9999-99" disabled="#{fabricanteController.viewFormMode}"/>
+                                        <p:inputMask id="cnpj" value="#{fabricanteController.selectedFabricante.cnpj}" mask="99.999.999/9999-99" converter="CNPJMaskConverter" disabled="#{fabricanteController.viewFormMode}"/>
                                     </div>
                                     <div class="field col-6 md-6">
                                         <p:outputLabel for="ie">Inscrição Estadual</p:outputLabel><br/>
-                                        <p:inputMask id="ie" value="#{fabricanteController.selectedFabricante.ie}" disabled="#{fabricanteController.viewFormMode}" mask="999/9999999"/>
+                                        <p:inputMask id="ie" value="#{fabricanteController.selectedFabricante.ie}" disabled="#{fabricanteController.viewFormMode}" converter="IEMaskConverter" mask="99/999999[99]"/>
                                     </div>
                                     <div class="field">
                                         <p:outputLabel for="ativo">Ativo</p:outputLabel><br/>
@@ -148,23 +148,70 @@
                                 </p:outputPanel>
                             </p:tab>
 
-                            <p:tab title="Contatos">
+                            <p:tab title="Contato">
                                 <p:outputPanel rendered="#{not empty fabricanteController.selectedFabricante}" class="ui-fluid formgrid grid">
                                     <div class="field p-col col-7 md-6">
                                         <p:outputLabel for="telefone">Telefone</p:outputLabel>
-                                        <p:inputMask id="telefone" value="#{fabricanteController.selectedFabricante.telefone}" disabled="#{fabricanteController.viewFormMode}" mask="(99)9999-9999"/>
+                                        <p:inputMask id="telefone" value="#{fabricanteController.selectedFabricante.telefone}" disabled="#{fabricanteController.viewFormMode}" mask="(99)9999-9999[9]" converter="telephoneMaskConverter"/>
                                     </div>
                                     <div class="field col-7 md-6 col">
                                         <p:outputLabel for="celular">Celular</p:outputLabel>
-                                        <p:inputMask id="celular" value="#{fabricanteController.selectedFabricante.celular}" disabled="#{fabricanteController.viewFormMode}" mask="(99)99999-9999"/>
+                                        <p:inputMask id="celular" value="#{fabricanteController.selectedFabricante.celular}" disabled="#{fabricanteController.viewFormMode}" mask="(99)99999-9999" converter="cellphoneMaskConverter"/>
                                     </div>
                                     <div class="field col-7 md-6">
                                         <p:outputLabel for="whatsapp">Whatsapp</p:outputLabel>
-                                        <p:inputMask id="whatsapp" value="#{fabricanteController.selectedFabricante.whatsapp}" disabled="#{fabricanteController.viewFormMode}" mask="(99)99999-9999"/>
+                                        <p:inputMask id="whatsapp" value="#{fabricanteController.selectedFabricante.whatsapp}" disabled="#{fabricanteController.viewFormMode}" mask="(99)99999-999[9]" converter="cellphoneMaskConverter"/>
                                     </div>
                                     <div class="field col-7 md-6">
                                         <p:outputLabel for="email">E-mail</p:outputLabel>
                                         <p:inputText id="email" value="#{fabricanteController.selectedFabricante.email}" maxlength="32" disabled="#{fabricanteController.viewFormMode}" />
+                                    </div>
+                                </p:outputPanel>
+                            </p:tab>
+
+                            <p:tab title="Outros contatos">
+                                <p:outputPanel rendered="#{not empty fabricanteController.selectedFabricante}" class="ui-fluid formgrid grid">
+                                    <div class="formgrid grid mb-3">
+                                        <div class="field p-col col-7 md-6">
+                                            <p:outputLabel for="contato">Contato</p:outputLabel>
+                                            <p:inputText id="contato" value="#{fabricanteController.selectedFabricante.contato}" disabled="#{fabricanteController.viewFormMode}" maxlength="54" converter="cellphoneMaskConverter"/>
+                                        </div>
+                                        <div class="field col-6 md-6 col">
+                                            <p:outputLabel for="ramalContato">Ramal do Contato</p:outputLabel>
+                                            <p:inputText id="ramalContato" value="#{fabricanteController.selectedFabricante.contatoRamal}" disabled="#{fabricanteController.viewFormMode}" maxlength="8"/>
+                                        </div>
+                                        <div class="field col-6 md-6">
+                                            <p:outputLabel for="foneContato">Fone do Contato</p:outputLabel>
+                                            <p:inputMask id="foneContato" value="#{fabricanteController.selectedFabricante.contatoFone}" disabled="#{fabricanteController.viewFormMode}" mask="(99)9999-9999[9]" converter="telephoneMaskConverter"/>
+                                        </div>
+                                        <div class="field col-7 md-6">
+                                            <p:outputLabel for="emailContato">E-mail do Contato</p:outputLabel>
+                                            <p:inputText id="emailContato" value="#{fabricanteController.selectedFabricante.contatoEmail}" maxlength="32" disabled="#{fabricanteController.viewFormMode}" />
+                                        </div>
+                                    </div>
+
+                                    <div class="formgrid grid mb-3">
+                                        <h5 class="col-12">Suporte</h5>
+                                        <div class="field p-col col-6 md-6">
+                                            <p:outputLabel for="foneSuporte">Fone do Suporte</p:outputLabel>
+                                            <p:inputMask id="foneSuporte" value="#{fabricanteController.selectedFabricante.suporteFone}" disabled="#{fabricanteController.viewFormMode}" mask="(99)9999-9999[9]" converter="telephoneMaskConverter"/>
+                                        </div>
+                                        <div class="field col-6 md-6 col">
+                                            <p:outputLabel for="emailSuporte">E-mail do Suporte</p:outputLabel>
+                                            <p:inputMask id="emailSuporte" value="#{fabricanteController.selectedFabricante.suporteEmail}" maxlength="32" disabled="#{fabricanteController.viewFormMode}" />
+                                        </div>
+                                    </div>
+
+                                    <div class="formgrid grid">
+                                        <h5 class="col-12">SAC</h5>
+                                        <div class="field col-6 md-6">
+                                            <p:outputLabel for="foneSac">Fone do SAC</p:outputLabel>
+                                            <p:inputMask id="foneSac" value="#{fabricanteController.selectedFabricante.sacFone}" disabled="#{fabricanteController.viewFormMode}" mask="(99)9999-9999[9]" converter="telephoneMaskConverter"/>
+                                        </div>
+                                        <div class="field col-6 md-6">
+                                            <p:outputLabel for="emailSac">E-mail do SAC</p:outputLabel>
+                                            <p:inputText id="emailSac" value="#{fabricanteController.selectedFabricante.sacEmail}" maxlength="32" disabled="#{fabricanteController.viewFormMode}" />
+                                        </div>
                                     </div>
                                 </p:outputPanel>
                             </p:tab>
@@ -221,7 +268,7 @@
                                     </div>
                                     <div class="field col-6 md-6">
                                         <p:outputLabel for="CEP">CEP</p:outputLabel>
-                                        <p:inputMask id="CEP" value="#{fabricanteController.selectedFabricante.endereco.cep}" mask="99999-999" disabled="#{fabricanteController.viewFormMode}"/>
+                                        <p:inputMask id="CEP" value="#{fabricanteController.selectedFabricante.endereco.cep}" mask="99999-999" converter="CEPMaskConverter" disabled="#{fabricanteController.viewFormMode}"/>
                                     </div>
                                     <div class="field col-12 md-6">
                                         <p:outputLabel for="pontoReferencia">Ponto de Referência</p:outputLabel>

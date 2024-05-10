@@ -81,7 +81,7 @@ public class FornecedorController implements Serializable {
             }
 
             PrimeFaces.current().executeScript("PF('manageFornecedorDialog').hide()");
-            PrimeFaces.current().ajax().update("fornecedores-form:messages", "fornecedores-form:dt-products");
+            PrimeFaces.current().ajax().update("fornecedores-form:messages", "fornecedores-form:dt-fornecedores");
         }catch(Exception e){
             MessagesUtil.errorMessage("Erro ao gravar", ExceptionsUtil.getExceptionMessage(e));
         }

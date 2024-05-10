@@ -78,7 +78,7 @@ public class FilialController implements Serializable {
             }
 
             PrimeFaces.current().executeScript("PF('manageEmpresaDialog').hide()");
-            PrimeFaces.current().ajax().update("empresas-form:messages", "empresas-form:dt-products");
+            PrimeFaces.current().ajax().update("empresas-form:messages", "empresas-form:dt-empresas");
         }catch(Exception e){
             MessagesUtil.errorMessage("Erro ao gravar", ExceptionsUtil.getExceptionMessage(e));
         }

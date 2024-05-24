@@ -23,9 +23,9 @@
                     <p:toolbar>
                         <p:toolbarGroup>
                             <p:commandButton value="Incluir" icon="pi pi-plus" actionListener="#{fabricanteController.openNew}"
-                                             update=":dialogs:manage-empresa" oncomplete="PF('manageFabricanteDialog').show()"
+                                             update=":manage-fabricante" oncomplete="PF('manageFabricanteDialog').show()"
                                              styleClass="ui-button-success" style="margin-right: .5rem">
-                                <p:resetInput target=":dialogs:manage-empresa" />
+                                <p:resetInput target=":manage-fabricante" />
                             </p:commandButton>
                             <p:commandButton id="delete-fabricantes-button" value="#{fabricanteController.deleteButtonMessage}"
                                              icon="pi pi-trash" actionListener="#{fabricanteController.deleteSelectedFabricantes}"
@@ -71,19 +71,19 @@
                             <h:outputText value="#{empresa.razao}" />
                         </p:column>
                         <p:column exportable="false" width="15%" styleClass="commands-table">
-                            <p:commandButton icon="pi pi-search-plus" update=":dialogs:manage-empresa"
+                            <p:commandButton icon="pi pi-search-plus" update=":manage-fabricante"
                                              actionListener="#{fabricanteController.callViewDialog()}"
                                              oncomplete="PF('manageFabricanteDialog').show()"
                                              styleClass="action-button rounded-button ui-button-primary" process="@this">
                                 <f:setPropertyActionListener value="#{empresa}" target="#{fabricanteController.selectedFabricante}" />
-                                <p:resetInput target=":dialogs:manage-empresa" />
+                                <p:resetInput target=":manage-fabricante" />
                             </p:commandButton>
-                            <p:commandButton icon="pi pi-pencil" update=":dialogs:manage-empresa"
+                            <p:commandButton icon="pi pi-pencil" update=":manage-fabricante"
                                              actionListener="#{fabricanteController.callEditDialog()}"
                                              oncomplete="PF('manageFabricanteDialog').show()"
                                              styleClass="action-button rounded-button ui-button-success" process="@this">
                                 <f:setPropertyActionListener value="#{empresa}" target="#{fabricanteController.selectedFabricante}" />
-                                <p:resetInput target=":dialogs:manage-empresa" />
+                                <p:resetInput target=":manage-fabricante" />
                             </p:commandButton>
                             <p:commandButton styleClass="ui-button-warning rounded-button action-button" icon="pi pi-trash"
                                              process="@this"
@@ -97,10 +97,12 @@
                     </p:contextMenu>
                 </h:form>
 
-                <h:form id="dialogs">
-                    <p:dialog id="manage-empresa"  header="Detalhes da Fabricante" showEffect="fade" modal="true" widgetVar="manageFabricanteDialog"
-                              responsive="true" blockScroll="true" maximizable="true" width="60%" fitViewport="true">
-                        <p:tabView dynamic="true" cache="false">
+
+                <p:dialog header="Detalhes da Fabricante" showEffect="fade" modal="true" widgetVar="manageFabricanteDialog"
+                          responsive="true" blockScroll="true" maximizable="true" width="60%" fitViewport="true">
+                    <h:form id="manage-fabricante">
+                        <p:growl id="dialog-fabricante-messages" showDetail="true" />
+                        <p:tabView id="details-panel" dynamic="true" cache="false">
                             <p:tab title="Identificação">
                                 <p:outputPanel rendered="#{not empty fabricanteController.selectedFabricante}" deferred="true" class="ui-fluid formgrid grid">
                                     <f:facet name="loading">
@@ -128,22 +130,26 @@
                                     <div class="field col-8 md-6">
                                         <p:outputLabel for="nome">Nome</p:outputLabel><br/>
                                         <p:inputText id="nome" value="#{fabricanteController.selectedFabricante.nome}" required="true" requiredMessage="Um nome deve ser informado" maxlength="45" size="45" disabled="#{fabricanteController.viewFormMode}"/>
+                                        <p:message for="nome" display="tooltip"/>
                                     </div>
                                     <div class="field col-12 md-6">
                                         <p:outputLabel for="razaoSocial">Razão Social</p:outputLabel><br/>
                                         <p:inputText id="razaoSocial" value="#{fabricanteController.selectedFabricante.razao}" required="true" requiredMessage="Uma razão deve ser informado" maxlength="45" size="45" disabled="#{fabricanteController.viewFormMode}" />
+                                        <p:message for="razaoSocial" display="tooltip"/>
                                     </div>
                                     <div class="field col-6 md-6">
                                         <p:outputLabel for="cnpj">CNPJ</p:outputLabel><br/>
                                         <p:inputMask id="cnpj" value="#{fabricanteController.selectedFabricante.cnpj}" mask="99.999.999/9999-99" converter="CNPJMaskConverter" disabled="#{fabricanteController.viewFormMode}"/>
+                                        <p:message for="cnpj" display="tooltip"/>
                                     </div>
                                     <div class="field col-6 md-6">
                                         <p:outputLabel for="ie">Inscrição Estadual</p:outputLabel><br/>
                                         <p:inputMask id="ie" value="#{fabricanteController.selectedFabricante.ie}" disabled="#{fabricanteController.viewFormMode}" converter="IEMaskConverter" mask="99/999999[99]"/>
+                                        <p:message for="ie" display="tooltip"/>
                                     </div>
                                     <div class="field">
                                         <p:outputLabel for="ativo">Ativo</p:outputLabel><br/>
-                                        <p:toggleSwitch id="ativo" value="#{fabricanteController.selectedFabricante.ativo}" onIcon="pi pi-check" offIcon="pi pi-times" disabled="#{fabricanteController.viewFormMode}" />
+                                        <p:toggleSwitch id="ativo" value="#{fabricanteController.selectedFabricante.ativo}" onIcon="pi pi-times" offIcon="pi pi-check" disabled="#{fabricanteController.viewFormMode}" />
                                     </div>
                                 </p:outputPanel>
                             </p:tab>
@@ -289,29 +295,35 @@
                                 </p:outputPanel>
                             </p:tab>
                         </p:tabView>
-                        <f:facet name="footer" id="footer-manage-empresa" rendered="#{fabricanteController.viewFormMode}">
-                            <p:commandButton value="Salvar" icon="pi pi-check" actionListener="#{fabricanteController.saveFabricante}"
-                                             update="manage-empresa :fabricantes-form:dt-fabricantes" process="manage-empresa @this" rendered="#{!fabricanteController.viewFormMode}"  />
+                        <div align="right">
+                            <p:commandButton value="Salvar" icon="pi pi-check" actionListener="#{fabricanteController.saveFabricante}" styleClass="m-1"
+                                             update=":fabricantes-form:dt-fabricantes :manage-fabricante:dialog-fabricante-messages :manage-fabricante:details-panel" process="@form" rendered="#{!fabricanteController.viewFormMode}"
+                                             oncomplete="if (!args.validationFailed &amp;&amp; !args.exceptionOccurred) { PF('manageFabricanteDialog').hide(); }"/>
                             <p:commandButton value="Cancelar" icon="pi pi-times" onclick="PF('manageFabricanteDialog').hide()"
-                                             class="ui-button-secondary" type="button" />
-                        </f:facet>
-                    </p:dialog>
+                                             class="ui-button-secondary m-1" type="button" />
+                        </div>
+                    </h:form>
+                </p:dialog>
 
-                    <p:confirmDialog widgetVar="deleteFabricanteDialog" showEffect="fade" width="300"
-                                     message="Deseja realmente deletar a empresa?" header="Confirm" severity="warn">
+                <p:confirmDialog widgetVar="deleteFabricanteDialog" showEffect="fade" width="300"
+                                 message="Deseja realmente deletar a empresa?" header="Confirm" severity="warn">
+                    <h:form>
                         <p:commandButton value="Sim" icon="pi pi-check" actionListener="#{fabricanteController.deleteFabricante}"
                                          process="@this" update=":fabricantes-form:delete-fabricantes-button"
                                          oncomplete="PF('deleteFabricanteDialog').hide()" />
                         <p:commandButton value="Não" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
                                          onclick="PF('deleteFabricanteDialog').hide()" />
-                    </p:confirmDialog>
+                    </h:form>
+                </p:confirmDialog>
 
-                    <p:confirmDialog global="true" showEffect="fade" width="300">
+                <p:confirmDialog global="true" showEffect="fade" width="300">
+                    <h:form>
                         <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
                         <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no ui-button-secondary"
-                                         icon="pi pi-times" />
-                    </p:confirmDialog>
-                </h:form>
+                                     icon="pi pi-times" />
+                    </h:form>
+                </p:confirmDialog>
+
             </div>
         </ui:define>
         <ui:define name="footer"></ui:define>

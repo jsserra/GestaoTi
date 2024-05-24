@@ -83,9 +83,9 @@ public class ColaboradorController implements Serializable {
                 MessagesUtil.infoMessage("Colaborador atualizado", daoColaborador.getMensagem());
             }
 
-            PrimeFaces.current().executeScript("PF('manageColaboradorDialog').hide()");
             PrimeFaces.current().ajax().update("colaboradores-form:messages", "colaboradores-form:dt-colaboradores");
         }catch(Exception e){
+            PrimeFaces.current().ajax().addCallbackParam("exceptionOccurred", true);
             MessagesUtil.errorMessage("Erro ao gravar", ExceptionsUtil.getExceptionMessage(e));
         }
     }

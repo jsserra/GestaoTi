@@ -23,9 +23,9 @@
                     <p:toolbar>
                         <p:toolbarGroup>
                             <p:commandButton value="Incluir" icon="pi pi-plus" actionListener="#{fornecedorController.openNew}"
-                                             update=":dialogs:manage-fornecedor" oncomplete="PF('manageFornecedorDialog').show()"
+                                             update=":manage-fornecedor" oncomplete="PF('manageFornecedorDialog').show()"
                                              styleClass="ui-button-success" style="margin-right: .5rem">
-                                <p:resetInput target=":dialogs:manage-fornecedor" />
+                                <p:resetInput target=":manage-fornecedor" />
                             </p:commandButton>
                             <p:commandButton id="delete-fornecedores-button" value="#{fornecedorController.deleteButtonMessage}"
                                              icon="pi pi-trash" actionListener="#{fornecedorController.deleteSelectedFornecedores}"
@@ -71,19 +71,19 @@
                             <h:outputText value="#{fornecedor.razao}" />
                         </p:column>
                         <p:column exportable="false" width="15%" styleClass="commands-table">
-                            <p:commandButton icon="pi pi-search-plus" update=":dialogs:manage-fornecedor"
+                            <p:commandButton icon="pi pi-search-plus" update=":manage-fornecedor"
                                              actionListener="#{fornecedorController.callViewDialog()}"
                                              oncomplete="PF('manageFornecedorDialog').show()"
                                              styleClass="action-button rounded-button ui-button-primary" process="@this">
                                 <f:setPropertyActionListener value="#{fornecedor}" target="#{fornecedorController.selectedFornecedor}" />
-                                <p:resetInput target=":dialogs:manage-fornecedor" />
+                                <p:resetInput target=":manage-fornecedor" />
                             </p:commandButton>
-                            <p:commandButton icon="pi pi-pencil" update=":dialogs:manage-fornecedor"
+                            <p:commandButton icon="pi pi-pencil" update=":manage-fornecedor"
                                              actionListener="#{fornecedorController.callEditDialog()}"
                                              oncomplete="PF('manageFornecedorDialog').show()"
                                              styleClass="action-button rounded-button ui-button-success" process="@this">
                                 <f:setPropertyActionListener value="#{fornecedor}" target="#{fornecedorController.selectedFornecedor}" />
-                                <p:resetInput target=":dialogs:manage-fornecedor" />
+                                <p:resetInput target=":manage-fornecedor" />
                             </p:commandButton>
                             <p:commandButton styleClass="ui-button-warning rounded-button action-button" icon="pi pi-trash"
                                              process="@this"
@@ -97,10 +97,11 @@
                     </p:contextMenu>
                 </h:form>
 
-                <h:form id="dialogs">
-                    <p:dialog id="manage-fornecedor"  header="Detalhes da Fornecedor" showEffect="fade" modal="true" widgetVar="manageFornecedorDialog"
+                <p:dialog header="Detalhes da Fornecedor" showEffect="fade" modal="true" widgetVar="manageFornecedorDialog"
                               responsive="true" blockScroll="true" maximizable="true" width="60%" fitViewport="true">
-                        <p:tabView dynamic="true" cache="false">
+                    <h:form id="manage-fornecedor">
+                        <p:growl id="dialog-fornecedor-messages" showDetail="true" />
+                        <p:tabView id="details-panel" dynamic="true" cache="false">
                             <p:tab title="Identificação">
                                 <p:outputPanel rendered="#{not empty fornecedorController.selectedFornecedor}" deferred="true" class="ui-fluid formgrid grid">
                                     <f:facet name="loading">
@@ -143,7 +144,7 @@
                                     </div>
                                     <div class="field">
                                         <p:outputLabel for="ativo">Ativo</p:outputLabel><br/>
-                                        <p:toggleSwitch id="ativo" value="#{fornecedorController.selectedFornecedor.ativo}" onIcon="pi pi-check" offIcon="pi pi-times" disabled="#{fornecedorController.viewFormMode}" />
+                                        <p:toggleSwitch id="ativo" value="#{fornecedorController.selectedFornecedor.ativo}" onIcon="pi pi-times" offIcon="pi pi-check" disabled="#{fornecedorController.viewFormMode}" />
                                     </div>
                                 </p:outputPanel>
                             </p:tab>
@@ -276,29 +277,35 @@
                                 </p:outputPanel>
                             </p:tab>
                         </p:tabView>
-                        <f:facet name="footer" id="footer-manage-fornecedor" rendered="#{fornecedorController.viewFormMode}">
-                            <p:commandButton value="Salvar" icon="pi pi-check" actionListener="#{fornecedorController.saveFornecedor}"
-                                             update="manage-fornecedor :fornecedores-form:dt-fornecedores" process="manage-fornecedor @this" rendered="#{!fornecedorController.viewFormMode}"  />
+                        <div align="right">
+                            <p:commandButton value="Salvar" icon="pi pi-check" actionListener="#{fornecedorController.saveFornecedor}" styleClass="m-1"
+                                             update="manage-fornecedor :fornecedores-form:dt-fornecedores" process="@form" rendered="#{!fornecedorController.viewFormMode}"
+                                             oncomplete="if (!args.validationFailed &amp;&amp; !args.exceptionOccurred) { PF('manageEmpresaDialog').hide(); }"
+                            />
                             <p:commandButton value="Cancelar" icon="pi pi-times" onclick="PF('manageFornecedorDialog').hide()"
-                                             class="ui-button-secondary" type="button" />
-                        </f:facet>
+                                             class="ui-button-secondary m-1" type="button" />
+                        </div>
+                        </h:form>
                     </p:dialog>
 
                     <p:confirmDialog widgetVar="deleteFornecedorDialog" showEffect="fade" width="300"
                                      message="Deseja realmente deletar a fornecedor?" header="Confirm" severity="warn">
-                        <p:commandButton value="Sim" icon="pi pi-check" actionListener="#{fornecedorController.deleteFornecedor}"
-                                         process="@this" update=":fornecedores-form:delete-fornecedores-button"
-                                         oncomplete="PF('deleteFornecedorDialog').hide()" />
-                        <p:commandButton value="Não" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
-                                         onclick="PF('deleteFornecedorDialog').hide()" />
+                        <h:form>
+                            <p:commandButton value="Sim" icon="pi pi-check" actionListener="#{fornecedorController.deleteFornecedor}"
+                                             process="@this" update=":fornecedores-form:delete-fornecedores-button"
+                                             oncomplete="PF('deleteFornecedorDialog').hide()" />
+                            <p:commandButton value="Não" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                             onclick="PF('deleteFornecedorDialog').hide()" />
+                        </h:form>
                     </p:confirmDialog>
 
                     <p:confirmDialog global="true" showEffect="fade" width="300">
-                        <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
-                        <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no ui-button-secondary"
-                                         icon="pi pi-times" />
+                        <h:form>
+                            <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+                            <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no ui-button-secondary"
+                                             icon="pi pi-times" />
+                        </h:form>
                     </p:confirmDialog>
-                </h:form>
             </div>
         </ui:define>
         <ui:define name="footer"></ui:define>

@@ -5,15 +5,19 @@
 package com.jp.dao;
 
 import com.jp.model.Filial;
+import jakarta.ejb.EJBException;
 import jakarta.ejb.Stateful;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceException;
 import jakarta.persistence.Query;
+import jakarta.validation.*;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -28,6 +32,7 @@ public class FilialDao implements Serializable{
     private List<Filial> listaObjetos;
 
     private String mensagem;
+    private Validator validator;
 
     public EntityManager getEm() {
         return em;
@@ -79,24 +84,42 @@ public class FilialDao implements Serializable{
     }
 
     public void persist(Filial object) throws Exception{
-//        try{
+        try{
             //em.getTransaction().begin();
-        em.persist(object);
-        mensagem = "Salvo com sucesso!";
+            validate(object);
+            em.persist(object);
+            mensagem = "Salvo com sucesso!";
            // em.getTransaction().commit();
 //            return true;
-//        }catch (Exception ex){
+        } catch (ValidationException e){
+            throw e;
+        } catch (PersistenceException e){
+            Throwable cause = e.getCause();
 //            //rollback();
-//            mensagem="Erro ao persistir: " + UtilMessages.getExceptionMessage(ex);
-//            return false;
-//        }
+            if(cause instanceof ConstraintViolationException){
+                throw new Exception("Erro: Violação de restrição de integridade única.", e);
+            } else{
+                throw e;
+            }
+        }
     }
 
     public void merge(Filial object) throws Exception{
 //        try{
             //em.getTransaction().begin();
+        try {
+            validate(object);
             em.merge(object);
             mensagem = "Editado com sucesso!";
+        } catch (ValidationException e){
+            throw e;
+        } catch (PersistenceException e){
+            Throwable cause = e.getCause();
+            if(cause instanceof ConstraintViolationException)
+                throw new Exception("Erro: Violação de restrição de integridade única.", e);
+            else
+                throw e;
+        }
             //em.getTransaction().commit();
 //            return true;
 //        }catch (Exception ex){
@@ -117,6 +140,7 @@ public class FilialDao implements Serializable{
     public void remove(Filial object) throws Exception{
 //        try{
             //em.getTransaction().begin();
+
             object = em.merge(object);
             em.remove(object);
             //em.getTransaction().commit();
@@ -131,5 +155,28 @@ public class FilialDao implements Serializable{
 
     public String getMensagem() {
         return mensagem;
+    }
+
+    private void initValidator(){
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        validator = factory.getValidator();
+    }
+
+    private void validate(Filial filial){
+        if(validator == null)
+            initValidator();
+
+        Set<ConstraintViolation<Filial>> constraintViolations = validator.validate(filial);
+        if(!constraintViolations.isEmpty()){
+            for(ConstraintViolation violation : constraintViolations) {
+                if(violation.getMessage().contains("Duplicate entry")) {
+                    if (violation.getMessage().contains("empresa.cnpj"))
+                        throw new ValidationException("O CNPJ informado já foi cadastrado em outra empresa.");
+                    if (violation.getMessage().contains("empresa.ie"))
+                        throw new ValidationException("A Inscrição Estadual informada já foi cadastrado em outra empresa.");
+                }
+                throw new ValidationException(violation.getMessage());
+            }
+        }
     }
 }

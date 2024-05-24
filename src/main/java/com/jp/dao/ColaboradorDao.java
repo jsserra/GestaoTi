@@ -5,14 +5,18 @@
 package com.jp.dao;
 
 import com.jp.model.Colaborador;
+import com.jp.model.Filial;
 import jakarta.ejb.Stateful;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceException;
 import jakarta.persistence.Query;
+import jakarta.validation.*;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Stateful
 public class ColaboradorDao implements Serializable {
@@ -25,6 +29,7 @@ public class ColaboradorDao implements Serializable {
     private List<Colaborador> listaObjetos;
 
     private String mensagem;
+    private Validator validator;
 
     public EntityManager getEm() {
         return em;
@@ -61,13 +66,37 @@ public class ColaboradorDao implements Serializable {
     }
 
     public void persist(Colaborador object) throws Exception{
-        em.persist(object);
-        mensagem = "Salvo com sucesso!";
+        try {
+            validate(object);
+            em.persist(object);
+            mensagem = "Salvo com sucesso!";
+        } catch (ValidationException e){
+            throw e;
+        } catch (PersistenceException e){
+            Throwable cause = e.getCause();
+
+            if(cause instanceof ConstraintViolationException){
+                throw new Exception("Erro: Violação de restrição de integridade única.", e);
+            } else{
+                throw e;
+            }
+        }
     }
 
     public void merge(Colaborador object) throws Exception{
-        em.merge(object);
-        mensagem = "Editado com sucesso!";
+        try {
+            validate(object);
+            em.merge(object);
+            mensagem = "Editado com sucesso!";
+        } catch (ValidationException e){
+            throw e;
+        } catch (PersistenceException e){
+            Throwable cause = e.getCause();
+            if(cause instanceof ConstraintViolationException)
+                throw new Exception("Erro: Violação de restrição de integridade única.\", e");
+            else
+                throw e;
+        }
     }
 
     public void remove(Colaborador object) throws Exception{
@@ -78,5 +107,21 @@ public class ColaboradorDao implements Serializable {
     public String getMensagem() {
         return mensagem;
     }
-    
+
+    private void initValidator(){
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        validator = factory.getValidator();
+    }
+
+    private void validate(Colaborador colaborador) {
+        if (validator == null)
+            initValidator();
+
+        Set<ConstraintViolation<Colaborador>> constraintViolations = validator.validate(colaborador);
+        if (!constraintViolations.isEmpty()) {
+            for (ConstraintViolation violation : constraintViolations) {
+                throw new ValidationException(violation.getMessage());
+            }
+        }
+    }
 }

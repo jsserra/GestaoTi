@@ -18,6 +18,7 @@ import jakarta.inject.Named;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletResponse;
 import org.primefaces.PrimeFaces;
+import org.primefaces.context.PrimeRequestContext;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -77,9 +78,16 @@ public class FilialController implements Serializable {
                 MessagesUtil.infoMessage("Empresa Atualizada", daoFilial.getMensagem());
             }
 
-            PrimeFaces.current().executeScript("PF('manageEmpresaDialog').hide()");
+            // Adicionando parâmetro de callback para informar que não houve exceção
+            PrimeFaces.current().ajax().addCallbackParam("exceptionOccurred", false);
+
+            // Atualizando os componentes relevantes
             PrimeFaces.current().ajax().update("empresas-form:messages", "empresas-form:dt-empresas");
-        }catch(Exception e){
+
+        } catch (Exception e) {
+            // Adicionando parâmetro de callback para informar que houve uma exceção
+            PrimeFaces.current().ajax().addCallbackParam("exceptionOccurred", true);
+
             MessagesUtil.errorMessage("Erro ao gravar", ExceptionsUtil.getExceptionMessage(e));
         }
     }
